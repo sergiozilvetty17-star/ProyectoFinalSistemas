@@ -55,6 +55,7 @@ bld/
 Migrations/
 
 # Local settings
+appsettings.json
 appsettings.Development.json
 appsettings.Local.json
 
