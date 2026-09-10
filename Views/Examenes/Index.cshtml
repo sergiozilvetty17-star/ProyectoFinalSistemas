@@ -4,74 +4,81 @@
     ViewData["Title"] = "Mis exámenes";
 }
 
-<div class="container py-5">
+<div class="examsecure-container">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <span class="badge bg-dark mb-2">EXAMSECURE</span>
+    <section class="examsecure-hero reveal">
 
-            <h1 class="fw-bold mb-1">
-                Mis exámenes
-            </h1>
+        <div class="d-flex justify-content-between align-items-end flex-wrap gap-4">
 
-            <p class="text-muted mb-0">
-                Crea y administra tus evaluaciones.
-            </p>
+            <div>
+
+                <div class="examsecure-eyebrow">
+                    <span class="examsecure-status-dot"></span>
+                    EVALUACIONES
+                </div>
+
+                <h1 class="examsecure-title">
+                    Mis
+                    <span class="examsecure-gradient-text">
+                        exámenes.
+                    </span>
+                </h1>
+
+                <p class="examsecure-subtitle">
+                    Diseña, configura y publica evaluaciones
+                    para tus estudiantes.
+                </p>
+
+            </div>
+
+            <a asp-action="Create"
+               class="examsecure-btn examsecure-btn-primary">
+                + Nuevo examen
+            </a>
+
         </div>
 
-        <a asp-action="Create"
-           class="btn btn-dark">
-            + Nuevo examen
-        </a>
-    </div>
+    </section>
 
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success">
-            @TempData["Success"]
-        </div>
-    }
-
-    @if (TempData["Error"] != null)
-    {
-        <div class="alert alert-danger">
-            @TempData["Error"]
-        </div>
-    }
 
     @if (!Model.Any())
     {
-        <div class="card shadow-sm border-0">
-            <div class="card-body text-center p-5">
+        <div class="examsecure-card p-5 text-center reveal">
 
-                <h4>No tienes exámenes registrados</h4>
-
-                <p class="text-muted">
-                    Crea tu primer examen para comenzar.
-                </p>
-
-                <a asp-action="Create"
-                   class="btn btn-dark">
-                    Crear examen
-                </a>
-
+            <div class="examsecure-card-icon mx-auto">
+                ◆
             </div>
+
+            <h3 class="fw-bold text-white">
+                Aún no tienes exámenes
+            </h3>
+
+            <p class="text-secondary mb-4">
+                Crea tu primera evaluación y comienza a construir
+                tu banco de preguntas.
+            </p>
+
+            <a asp-action="Create"
+               class="examsecure-btn examsecure-btn-primary">
+                Crear mi primer examen
+            </a>
+
         </div>
     }
     else
     {
-        <div class="card shadow-sm border-0">
+        <div class="examsecure-card overflow-hidden reveal">
 
             <div class="table-responsive">
 
-                <table class="table table-hover align-middle mb-0">
+                <table class="table examsecure-table align-middle mb-0">
 
-                    <thead class="table-dark">
+                    <thead>
                         <tr>
-                            <th>Examen</th>
+                            <th>Evaluación</th>
                             <th>Materia</th>
                             <th>Inicio</th>
-                            <th>Fin</th>
+                            <th>Finaliza</th>
                             <th>Duración</th>
                             <th>Estado</th>
                             <th class="text-end">Acciones</th>
@@ -85,29 +92,29 @@
                             <tr>
 
                                 <td>
-                                    <div class="fw-semibold">
+
+                                    <div class="fw-bold text-white">
                                         @examen.Titulo
                                     </div>
 
-                                    <small class="text-muted">
+                                    <small class="text-secondary">
                                         @(examen.Preguntas?.Count ?? 0) preguntas
                                     </small>
+
                                 </td>
 
                                 <td>
-                                    @examen.Materia?.Nombre
+                                    <span class="text-light">
+                                        @examen.Materia?.Nombre
+                                    </span>
                                 </td>
 
                                 <td>
-                                    @examen.FechaInicio
-                                        .ToLocalTime()
-                                        .ToString("dd/MM/yyyy HH:mm")
+                                    @examen.FechaInicio.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
                                 </td>
 
                                 <td>
-                                    @examen.FechaFin
-                                        .ToLocalTime()
-                                        .ToString("dd/MM/yyyy HH:mm")
+                                    @examen.FechaFin.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
                                 </td>
 
                                 <td>
@@ -115,71 +122,83 @@
                                 </td>
 
                                 <td>
+
                                     @switch (examen.Estado)
                                     {
                                         case EcommerceApp.Models.EstadoExamen.Borrador:
-                                            <span class="badge bg-secondary">
-                                                Borrador
+
+                                            <span class="examsecure-badge examsecure-badge-warning">
+                                                ● Borrador
                                             </span>
+
                                             break;
 
                                         case EcommerceApp.Models.EstadoExamen.Publicado:
-                                            <span class="badge bg-success">
-                                                Publicado
+
+                                            <span class="examsecure-badge examsecure-badge-success">
+                                                ● Publicado
                                             </span>
+
                                             break;
 
                                         case EcommerceApp.Models.EstadoExamen.Cerrado:
-                                            <span class="badge bg-dark">
-                                                Cerrado
+
+                                            <span class="examsecure-badge examsecure-badge-neutral">
+                                                ● Cerrado
                                             </span>
+
                                             break;
                                     }
+
                                 </td>
 
                                 <td class="text-end">
 
-                                    <a asp-action="Edit"
-                                       asp-route-id="@examen.Id"
-                                       class="btn btn-sm btn-outline-dark">
-                                        Editar
-                                    </a>
+                                    <div class="d-flex justify-content-end gap-2">
 
-                                    @if (examen.Estado ==
-                                        EcommerceApp.Models.EstadoExamen.Borrador)
-                                    {
-                                        <form asp-action="Publicar"
-                                              asp-route-id="@examen.Id"
-                                              method="post"
-                                              class="d-inline">
+                                        <a asp-action="Edit"
+                                           asp-route-id="@examen.Id"
+                                           class="examsecure-btn examsecure-btn-secondary btn-sm">
+                                            Editar
+                                        </a>
 
-                                            @Html.AntiForgeryToken()
+                                        @if (examen.Estado ==
+                                            EcommerceApp.Models.EstadoExamen.Borrador)
+                                        {
+                                            <form asp-action="Publicar"
+                                                  asp-route-id="@examen.Id"
+                                                  method="post"
+                                                  data-loading>
 
-                                            <button type="submit"
-                                                    class="btn btn-sm btn-outline-success">
-                                                Publicar
-                                            </button>
+                                                @Html.AntiForgeryToken()
 
-                                        </form>
-                                    }
+                                                <button type="submit"
+                                                        class="examsecure-btn examsecure-btn-primary btn-sm">
+                                                    Publicar
+                                                </button>
 
-                                    @if (examen.Estado ==
-                                        EcommerceApp.Models.EstadoExamen.Publicado)
-                                    {
-                                        <form asp-action="Cerrar"
-                                              asp-route-id="@examen.Id"
-                                              method="post"
-                                              class="d-inline">
+                                            </form>
+                                        }
 
-                                            @Html.AntiForgeryToken()
+                                        @if (examen.Estado ==
+                                            EcommerceApp.Models.EstadoExamen.Publicado)
+                                        {
+                                            <form asp-action="Cerrar"
+                                                  asp-route-id="@examen.Id"
+                                                  method="post"
+                                                  data-loading>
 
-                                            <button type="submit"
-                                                    class="btn btn-sm btn-outline-danger">
-                                                Cerrar
-                                            </button>
+                                                @Html.AntiForgeryToken()
 
-                                        </form>
-                                    }
+                                                <button type="submit"
+                                                        class="examsecure-btn examsecure-btn-danger btn-sm">
+                                                    Cerrar
+                                                </button>
+
+                                            </form>
+                                        }
+
+                                    </div>
 
                                 </td>
 

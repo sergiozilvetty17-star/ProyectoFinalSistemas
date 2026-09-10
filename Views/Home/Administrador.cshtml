@@ -1,69 +1,130 @@
-@{
+﻿@{
     ViewData["Title"] = "Administrador";
 }
 
-<div class="container py-5">
+<div class="examsecure-container">
 
-    <div class="mb-5">
-        <span class="badge bg-dark mb-2">EXAMSECURE</span>
+    <section class="examsecure-hero reveal">
 
-        <h1 class="display-5 fw-bold">
-            Panel de Administrador
+        <div class="examsecure-eyebrow">
+
+            <span class="examsecure-status-dot"></span>
+
+            PANEL DE CONTROL
+
+        </div>
+
+        <h1 class="examsecure-title">
+
+            Control total.
+
+            <span class="examsecure-gradient-text">
+                Seguridad primero.
+            </span>
+
         </h1>
 
-        <p class="text-muted">
-            Administraci�n general del sistema de ex�menes online.
+        <p class="examsecure-subtitle">
+
+            Administra usuarios, estructura académica y configuración
+            de la plataforma desde un único centro de control.
+
         </p>
-    </div>
 
-    <div class="row g-4">
+    </section>
 
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-                    <h4>Usuarios</h4>
-                    <p class="text-muted">
-                        Crear y administrar estudiantes y docentes.
+
+    <section class="row g-4 pb-5">
+
+        <div class="col-md-6 col-xl-4 reveal reveal-delay-1">
+
+            <a asp-controller="Usuarios"
+               asp-action="Index"
+               class="text-decoration-none">
+
+                <div class="examsecure-card h-100 p-4">
+
+                    <div class="examsecure-card-icon">
+                        ◉
+                    </div>
+
+                    <h4 class="text-white fw-bold">
+                        Usuarios
+                    </h4>
+
+                    <p class="text-secondary">
+                        Administra estudiantes y docentes,
+                        sus datos académicos y estado de acceso.
                     </p>
 
-                    <a asp-controller="Usuarios"
-                       asp-action="Index"
-                       class="btn btn-dark">
-                        Administrar usuarios
-                    </a>
+                    <span class="text-primary fw-semibold">
+                        Gestionar usuarios →
+                    </span>
+
                 </div>
-            </div>
+
+            </a>
+
         </div>
 
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-                    <h4>Registro facial</h4>
-                    <p class="text-muted">
-                        Registrar y actualizar la identidad facial de los estudiantes.
+
+        <div class="col-md-6 col-xl-4 reveal reveal-delay-2">
+
+            <a asp-controller="Materias"
+               asp-action="Index"
+               class="text-decoration-none">
+
+                <div class="examsecure-card h-100 p-4">
+
+                    <div class="examsecure-card-icon">
+                        ▦
+                    </div>
+
+                    <h4 class="text-white fw-bold">
+                        Materias
+                    </h4>
+
+                    <p class="text-secondary">
+                        Organiza las materias académicas y
+                        asigna docentes responsables.
                     </p>
 
-                    <button class="btn btn-dark" disabled>
-                        Pr�ximamente
-                    </button>
+                    <span class="text-primary fw-semibold">
+                        Gestionar materias →
+                    </span>
+
                 </div>
-            </div>
+
+            </a>
+
         </div>
 
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-                    <h4>Seguridad</h4>
-                    <p class="text-muted">
-                        Revisar eventos y actividad sospechosa.
-                    </p>
 
-                    <button class="btn btn-dark" disabled>
-                        Pr�ximamente
-                    </button>
+        <div class="col-md-6 col-xl-4 reveal reveal-delay-3">
+
+            <div class="examsecure-card h-100 p-4">
+
+                <div class="examsecure-card-icon">
+                    ◈
                 </div>
+
+                <h4 class="text-white fw-bold">
+                    Seguridad
+                </h4>
+
+                <p class="text-secondary">
+                    El sistema registra eventos de autenticación,
+                    actividad y seguridad durante las evaluaciones.
+                </p>
+
+                <div class="examsecure-badge examsecure-badge-success">
+                    Sistema protegido
+                </div>
+
             </div>
+
         </div>
 
-    </div>
+    </section>
+
 </div>

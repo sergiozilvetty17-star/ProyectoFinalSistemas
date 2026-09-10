@@ -1,64 +1,117 @@
-@{
-    ViewData["Title"] = "Estudiante";
+﻿@{
+    ViewData["Title"] = "Panel Estudiante";
 }
 
-<div class="container py-5">
+<div class="examsecure-container">
 
-    <div class="mb-5">
-        <span class="badge bg-dark mb-2">EXAMSECURE</span>
+    <section class="examsecure-hero reveal">
 
-        <h1 class="display-5 fw-bold">
-            Panel de Estudiante
+        <div class="examsecure-eyebrow">
+
+            <span class="examsecure-status-dot"></span>
+
+            ESPACIO ESTUDIANTE
+
+        </div>
+
+        <h1 class="examsecure-title">
+
+            Prepárate.
+
+            <span class="examsecure-gradient-text">
+                Demuestra lo que sabes.
+            </span>
+
         </h1>
 
-        <p class="text-muted">
-            Accede a tus materias y evaluaciones online.
+        <p class="examsecure-subtitle">
+
+            Accede a tus evaluaciones y completa cada examen
+            bajo un entorno diseñado para garantizar la integridad académica.
+
         </p>
-    </div>
 
-    <div class="row g-4">
+    </section>
 
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-                    <h4>Mis materias</h4>
-                    <p class="text-muted">
-                        Consulta las materias en las que est�s inscrito.
-                    </p>
-                    <button class="btn btn-dark" disabled>
-                        Pr�ximamente
-                    </button>
+
+    <section class="row g-4 pb-5">
+
+        <div class="col-md-6 col-xl-4 reveal reveal-delay-1">
+
+            <div class="examsecure-card h-100 p-4">
+
+                <div class="examsecure-card-icon">
+                    ▦
                 </div>
+
+                <h4 class="text-white fw-bold">
+                    Mis materias
+                </h4>
+
+                <p class="text-secondary">
+                    Consulta tus materias y cursos inscritos.
+                </p>
+
+                <span class="examsecure-badge examsecure-badge-neutral">
+                    Área académica
+                </span>
+
             </div>
+
         </div>
 
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-                    <h4>Ex�menes disponibles</h4>
-                    <p class="text-muted">
-                        Revisa tus evaluaciones pendientes.
-                    </p>
-                    <button class="btn btn-dark" disabled>
-                        Pr�ximamente
-                    </button>
+
+        <div class="col-md-6 col-xl-4 reveal reveal-delay-2">
+
+            <div class="examsecure-card h-100 p-4">
+
+                <div class="examsecure-card-icon">
+                    ◆
                 </div>
+
+                <h4 class="text-white fw-bold">
+                    Exámenes disponibles
+                </h4>
+
+                <p class="text-secondary">
+                    Aquí aparecerán las evaluaciones disponibles
+                    para realizar.
+                </p>
+
+                <span class="examsecure-badge examsecure-badge-neutral">
+                    Sin evaluaciones pendientes
+                </span>
+
             </div>
+
         </div>
 
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-                    <h4>Mis resultados</h4>
-                    <p class="text-muted">
-                        Consulta tus calificaciones.
-                    </p>
-                    <button class="btn btn-dark" disabled>
-                        Pr�ximamente
-                    </button>
+
+        <div class="col-md-6 col-xl-4 reveal reveal-delay-3">
+
+            <div class="examsecure-card h-100 p-4">
+
+                <div class="examsecure-card-icon">
+                    ↗
                 </div>
+
+                <h4 class="text-white fw-bold">
+                    Mis resultados
+                </h4>
+
+                <p class="text-secondary">
+                    Consulta tus calificaciones después de completar
+                    tus evaluaciones.
+                </p>
+
+                <span class="examsecure-badge examsecure-badge-neutral">
+                    Historial académico
+                </span>
+
             </div>
+
         </div>
 
-    </div>
+    </section>
+
 </div>

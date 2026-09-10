@@ -2,80 +2,121 @@
     ViewData["Title"] = "Panel Docente";
 }
 
-<div class="container py-5">
+<div class="examsecure-container">
 
-    <div class="mb-5">
-        <span class="badge bg-dark mb-2">EXAMSECURE</span>
+    <section class="examsecure-hero reveal">
 
-        <h1 class="display-5 fw-bold">
-            Panel de Docente
-        </h1>
+        <div class="examsecure-eyebrow">
 
-        <p class="text-muted">
-            Gestiona tus materias, exámenes y resultados.
-        </p>
-    </div>
+            <span class="examsecure-status-dot"></span>
 
-    <div class="row g-4">
+            ESPACIO DOCENTE
 
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm border-0">
-                <div class="card-body p-4">
-
-                    <h4>Mis materias</h4>
-
-                    <p class="text-muted">
-                        Consulta las materias que tienes asignadas.
-                    </p>
-
-                    <a asp-controller="Materias"
-                       asp-action="Index"
-                       class="btn btn-outline-dark">
-                        Ver materias
-                    </a>
-
-                </div>
-            </div>
         </div>
 
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm border-0">
-                <div class="card-body p-4">
+        <h1 class="examsecure-title">
 
-                    <h4>Exámenes</h4>
+            Tus evaluaciones.
 
-                    <p class="text-muted">
+            <span class="examsecure-gradient-text">
+                Bajo control.
+            </span>
+
+        </h1>
+
+        <p class="examsecure-subtitle">
+
+            Crea evaluaciones, configura preguntas y controla
+            el proceso de evaluación de tus estudiantes.
+
+        </p>
+
+    </section>
+
+
+    <section class="row g-4 pb-5">
+
+        <div class="col-md-6 col-xl-4 reveal reveal-delay-1">
+
+            <div class="examsecure-card h-100 p-4">
+
+                <div class="examsecure-card-icon">
+                    ▦
+                </div>
+
+                <h4 class="text-white fw-bold">
+                    Mis materias
+                </h4>
+
+                <p class="text-secondary">
+                    Consulta las materias académicas que tienes asignadas.
+                </p>
+
+                <span class="examsecure-badge examsecure-badge-neutral">
+                    Gestión académica
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-6 col-xl-4 reveal reveal-delay-2">
+
+            <a asp-controller="Examenes"
+               asp-action="Index"
+               class="text-decoration-none">
+
+                <div class="examsecure-card h-100 p-4">
+
+                    <div class="examsecure-card-icon">
+                        ◆
+                    </div>
+
+                    <h4 class="text-white fw-bold">
+                        Exámenes
+                    </h4>
+
+                    <p class="text-secondary">
                         Crea, configura y publica tus evaluaciones.
                     </p>
 
-                    <a asp-controller="Examenes"
-                       asp-action="Index"
-                       class="btn btn-dark">
-                        Administrar exámenes
-                    </a>
+                    <span class="text-primary fw-semibold">
+                        Administrar exámenes →
+                    </span>
 
                 </div>
-            </div>
+
+            </a>
+
         </div>
 
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm border-0">
-                <div class="card-body p-4">
 
-                    <h4>Resultados</h4>
+        <div class="col-md-6 col-xl-4 reveal reveal-delay-3">
 
-                    <p class="text-muted">
-                        Consulta las calificaciones y resultados de tus estudiantes.
-                    </p>
+            <div class="examsecure-card h-100 p-4">
 
-                    <button class="btn btn-outline-secondary" disabled>
-                        Próximamente
-                    </button>
-
+                <div class="examsecure-card-icon">
+                    ↗
                 </div>
+
+                <h4 class="text-white fw-bold">
+                    Resultados
+                </h4>
+
+                <p class="text-secondary">
+                    Las calificaciones aparecerán aquí cuando
+                    tus estudiantes completen evaluaciones.
+                </p>
+
+                <span class="examsecure-badge examsecure-badge-neutral">
+                    Preparado para resultados
+                </span>
+
             </div>
+
         </div>
 
-    </div>
+    </section>
 
 </div>
