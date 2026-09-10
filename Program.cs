@@ -1,119 +1,212 @@
-using Microsoft.AspNetCore.Identity; 
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using EcommerceApp.Data;
+using EcommerceApp.Models;
 
-using Microsoft.EntityFrameworkCore; 
+var builder = WebApplication.CreateBuilder(args);
 
-using EcommerceApp.Data; 
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseNpgsql(
+        builder.Configuration.GetConnectionString("DefaultConnection")));
 
-using EcommerceApp.Models; 
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+{
+    options.Password.RequiredLength = 6;
+    options.Password.RequireDigit = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireNonAlphanumeric = false;
+})
+.AddEntityFrameworkStores<ApplicationDbContext>()
+.AddDefaultTokenProviders();
 
-  
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Account/Login";
+    options.LogoutPath = "/Account/Logout";
+    options.AccessDeniedPath = "/Account/AccessDenied";
 
-var builder = WebApplication.CreateBuilder(args); 
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+    options.SlidingExpiration = true;
+});
 
-  
+builder.Services.AddControllersWithViews();
 
-builder.Services.AddDbContext<ApplicationDbContext>(options => 
+var app = builder.Build();
 
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))); 
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
+}
 
-  
+app.UseHttpsRedirection();
+app.UseStaticFiles();
 
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => 
+app.UseRouting();
 
-    { 
+app.UseAuthentication();
+app.UseAuthorization();
 
-        options.Password.RequiredLength = 6; 
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
-    }) 
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
 
-    .AddEntityFrameworkStores<ApplicationDbContext>() 
+    var context =
+        services.GetRequiredService<ApplicationDbContext>();
 
-    .AddDefaultTokenProviders(); 
+    var roleManager =
+        services.GetRequiredService<RoleManager<IdentityRole>>();
 
-  
+    var userManager =
+        services.GetRequiredService<UserManager<ApplicationUser>>();
 
-builder.Services.ConfigureApplicationCookie(options => 
+    string[] roles =
+    {
+        "Administrador",
+        "Docente",
+        "Estudiante"
+    };
 
-{ 
+    foreach (var role in roles)
+    {
+        if (!await roleManager.RoleExistsAsync(role))
+        {
+            await roleManager.CreateAsync(
+                new IdentityRole(role));
+        }
+    }
 
-    options.LoginPath = "/Account/Login"; 
+    var carreras = new[]
+    {
+        "Ingeniería de Sistemas",
+        "Derecho",
+        "Ingeniería Comercial",
+        "Administración de Empresas",
+        "Contaduría Pública"
+    };
 
-    options.LogoutPath = "/Account/Logout"; 
+    foreach (var nombreCarrera in carreras)
+    {
+        var existe = await context.Carreras
+            .AnyAsync(c => c.Nombre == nombreCarrera);
 
-    options.AccessDeniedPath = "/Account/AccessDenied"; 
+        if (!existe)
+        {
+            context.Carreras.Add(new Carrera
+            {
+                Nombre = nombreCarrera,
+                Activa = true
+            });
+        }
+    }
 
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(60); 
+    await context.SaveChangesAsync();
 
-    options.SlidingExpiration = true; 
+    var adminEmail =
+        Environment.GetEnvironmentVariable(
+            "EXAMSECURE_ADMIN_EMAIL");
 
-}); 
+    var adminPassword =
+        Environment.GetEnvironmentVariable(
+            "EXAMSECURE_ADMIN_PASSWORD");
 
-  
+    var adminName =
+        Environment.GetEnvironmentVariable(
+            "EXAMSECURE_ADMIN_NAME");
 
-builder.Services.AddControllersWithViews(); 
+    if (!string.IsNullOrWhiteSpace(adminEmail) &&
+        !string.IsNullOrWhiteSpace(adminPassword))
+    {
+        var admin =
+            await userManager.FindByEmailAsync(adminEmail);
 
-  
+        if (admin == null)
+        {
+            var nombreCompleto =
+                string.IsNullOrWhiteSpace(adminName)
+                    ? "Administrador General"
+                    : adminName;
 
-var app = builder.Build(); 
+            var partes = nombreCompleto
+                .Split(
+                    ' ',
+                    StringSplitOptions.RemoveEmptyEntries);
 
-  
+            var nombres =
+                partes.Length > 0
+                    ? partes[0]
+                    : "Administrador";
 
-if (!app.Environment.IsDevelopment()) 
+            var apellido =
+                partes.Length > 1
+                    ? partes[^1]
+                    : "General";
 
-{ 
+            admin = new ApplicationUser
+            {
+                UserName = adminEmail,
+                Email = adminEmail,
+                Nombres = nombres,
+                ApellidoPaterno = apellido,
+                EmailConfirmed = true,
+                CreatedAt = DateTime.UtcNow
+            };
 
-    app.UseExceptionHandler("/Home/Error"); 
+            var result =
+                await userManager.CreateAsync(
+                    admin,
+                    adminPassword);
 
-    app.UseHsts(); 
+            if (!result.Succeeded)
+            {
+                var errors = string.Join(
+                    " | ",
+                    result.Errors.Select(e => e.Description));
 
-} 
+                throw new Exception(
+                    $"No se pudo crear el administrador: {errors}");
+            }
 
-  
+            await userManager.AddToRoleAsync(
+                admin,
+                "Administrador");
 
-app.UseHttpsRedirection(); 
+            Console.WriteLine(
+                $"Administrador creado: {adminEmail}");
+        }
+        else
+        {
+            if (string.IsNullOrWhiteSpace(admin.Nombres))
+                admin.Nombres = "Administrador";
 
-app.UseStaticFiles(); 
+            if (string.IsNullOrWhiteSpace(admin.ApellidoPaterno))
+                admin.ApellidoPaterno = "General";
 
-app.UseRouting(); 
+            await userManager.UpdateAsync(admin);
 
-  
+            if (!await userManager.IsInRoleAsync(
+                    admin,
+                    "Administrador"))
+            {
+                await userManager.AddToRoleAsync(
+                    admin,
+                    "Administrador");
+            }
 
-app.UseAuthentication(); 
+            Console.WriteLine(
+                $"Administrador existente: {adminEmail}");
+        }
+    }
+    else
+    {
+        Console.WriteLine(
+            "Variables EXAMSECURE_ADMIN_EMAIL y EXAMSECURE_ADMIN_PASSWORD no configuradas.");
+    }
+}
 
-app.UseAuthorization(); 
-
-  
-
-app.MapControllerRoute( 
-
-    name: "default", 
-
-    pattern: "{controller=Products}/{action=Index}/{id?}"); 
-
-  
-
-// Crear roles por defecto solo si no existen (evita errores al reiniciar la app) 
-
-using (var scope = app.Services.CreateScope()) 
-
-{ 
-
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>(); 
-
-    string[] roles = { "Admin", "User" }; 
-
-    foreach (var role in roles) 
-
-    { 
-
-        if (!await roleManager.RoleExistsAsync(role)) 
-
-            await roleManager.CreateAsync(new IdentityRole(role)); 
-
-    } 
-
-} 
-
-  
-
-app.Run(); 
+app.Run();

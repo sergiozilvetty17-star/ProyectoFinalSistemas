@@ -1,0 +1,326 @@
+@model EcommerceApp.Models.UsuarioCreateViewModel
+
+@{
+    ViewData["Title"] = "Nuevo usuario";
+    var carreras = ViewBag.Carreras as List<EcommerceApp.Models.Carrera>
+        ?? new List<EcommerceApp.Models.Carrera>();
+}
+
+<div class="container py-5">
+
+    <div class="mb-4">
+        <span class="badge bg-dark mb-2">EXAMSECURE</span>
+
+        <h1 class="display-6 fw-bold">
+            Nuevo usuario
+        </h1>
+
+        <p class="text-muted">
+            Registra un estudiante o docente.
+        </p>
+    </div>
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-9">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-header bg-dark text-white py-3">
+                    <strong>Datos del usuario</strong>
+                </div>
+
+                <div class="card-body p-4">
+
+                    <form asp-action="Create" method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <div asp-validation-summary="ModelOnly"
+                             class="alert alert-danger">
+                        </div>
+
+                        <h5 class="fw-bold mb-3">
+                            Datos personales
+                        </h5>
+
+                        <div class="row g-3">
+
+                            <div class="col-md-4">
+                                <label asp-for="Nombres"
+                                       class="form-label">
+                                </label>
+
+                                <input asp-for="Nombres"
+                                       class="form-control"
+                                       placeholder="Ej. Sergio Andre" />
+
+                                <span asp-validation-for="Nombres"
+                                      class="text-danger">
+                                </span>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label asp-for="ApellidoPaterno"
+                                       class="form-label">
+                                </label>
+
+                                <input asp-for="ApellidoPaterno"
+                                       class="form-control" />
+
+                                <span asp-validation-for="ApellidoPaterno"
+                                      class="text-danger">
+                                </span>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label asp-for="ApellidoMaterno"
+                                       class="form-label">
+                                </label>
+
+                                <input asp-for="ApellidoMaterno"
+                                       class="form-control" />
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="CedulaIdentidad"
+                                       class="form-label">
+                                </label>
+
+                                <input asp-for="CedulaIdentidad"
+                                       class="form-control"
+                                       placeholder="Ej. 12345678" />
+
+                                <span asp-validation-for="CedulaIdentidad"
+                                      class="text-danger">
+                                </span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="Telefono"
+                                       class="form-label">
+                                </label>
+
+                                <input asp-for="Telefono"
+                                       class="form-control"
+                                       placeholder="Opcional" />
+                            </div>
+
+                            <div class="col-12">
+                                <label asp-for="Email"
+                                       class="form-label">
+                                </label>
+
+                                <input asp-for="Email"
+                                       class="form-control"
+                                       type="email" />
+
+                                <span asp-validation-for="Email"
+                                      class="text-danger">
+                                </span>
+                            </div>
+
+                        </div>
+
+                        <hr class="my-4" />
+
+                        <h5 class="fw-bold mb-3">
+                            Datos académicos
+                        </h5>
+
+                        <div class="row g-3">
+
+                            <div class="col-md-6">
+
+                                <label asp-for="Rol"
+                                       class="form-label">
+                                </label>
+
+                                <select asp-for="Rol"
+                                        class="form-select"
+                                        id="rol">
+
+                                    <option value="">
+                                        Seleccione un rol
+                                    </option>
+
+                                    <option value="Estudiante">
+                                        Estudiante
+                                    </option>
+
+                                    <option value="Docente">
+                                        Docente
+                                    </option>
+
+                                </select>
+
+                                <span asp-validation-for="Rol"
+                                      class="text-danger">
+                                </span>
+
+                            </div>
+
+                            <div class="col-md-6"
+                                 id="especialidadContainer">
+
+                                <label asp-for="Especialidad"
+                                       class="form-label">
+                                </label>
+
+                                <input asp-for="Especialidad"
+                                       class="form-control"
+                                       placeholder="Ej. Bases de datos" />
+
+                            </div>
+
+                            <div class="col-md-6"
+                                 id="carreraContainer">
+
+                                <label asp-for="CarreraId"
+                                       class="form-label">
+                                </label>
+
+                                <select asp-for="CarreraId"
+                                        class="form-select">
+
+                                    <option value="">
+                                        Seleccione una carrera
+                                    </option>
+
+                                    @foreach (var carrera in carreras)
+                                    {
+                                        <option value="@carrera.Id">
+                                            @carrera.Nombre
+                                        </option>
+                                    }
+
+                                </select>
+
+                                <span asp-validation-for="CarreraId"
+                                      class="text-danger">
+                                </span>
+
+                            </div>
+
+                            <div class="col-md-6"
+                                 id="semestreContainer">
+
+                                <label asp-for="Semestre"
+                                       class="form-label">
+                                </label>
+
+                                <select asp-for="Semestre"
+                                        class="form-select">
+
+                                    <option value="">
+                                        Seleccione un semestre
+                                    </option>
+
+                                    @for (var i = 1; i <= 20; i++)
+                                    {
+                                        <option value="@i">
+                                            @i°
+                                        </option>
+                                    }
+
+                                </select>
+
+                                <span asp-validation-for="Semestre"
+                                      class="text-danger">
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                        <hr class="my-4" />
+
+                        <h5 class="fw-bold mb-3">
+                            Acceso al sistema
+                        </h5>
+
+                        <div class="mb-4">
+
+                            <label asp-for="Password"
+                                   class="form-label">
+                            </label>
+
+                            <input asp-for="Password"
+                                   class="form-control"
+                                   autocomplete="new-password" />
+
+                            <span asp-validation-for="Password"
+                                  class="text-danger">
+                            </span>
+
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+
+                            <a asp-action="Index"
+                               class="btn btn-outline-secondary">
+                                Cancelar
+                            </a>
+
+                            <button type="submit"
+                                    class="btn btn-dark">
+                                Crear usuario
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync(
+            "_ValidationScriptsPartial");
+    }
+
+    <script>
+        function actualizarFormulario() {
+            const rol = document.getElementById("rol").value;
+
+            const carrera =
+                document.getElementById("carreraContainer");
+
+            const semestre =
+                document.getElementById("semestreContainer");
+
+            const especialidad =
+                document.getElementById("especialidadContainer");
+
+            if (rol === "Estudiante") {
+                carrera.style.display = "";
+                semestre.style.display = "";
+                especialidad.style.display = "none";
+            }
+            else if (rol === "Docente") {
+                carrera.style.display = "none";
+                semestre.style.display = "none";
+                especialidad.style.display = "";
+            }
+            else {
+                carrera.style.display = "none";
+                semestre.style.display = "none";
+                especialidad.style.display = "none";
+            }
+        }
+
+        document
+            .getElementById("rol")
+            .addEventListener("change", actualizarFormulario);
+
+        actualizarFormulario();
+    </script>
+}

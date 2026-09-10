@@ -1,0 +1,200 @@
+﻿@model EcommerceApp.Models.Examen
+
+@{
+    ViewData["Title"] = "Editar examen";
+    var materias = ViewBag.Materias as List<EcommerceApp.Models.Materia>;
+}
+
+<div class="container py-5">
+
+    <div class="mb-4">
+        <span class="badge bg-dark mb-2">EXAMSECURE</span>
+
+        <h1 class="fw-bold">
+            Editar examen
+        </h1>
+
+        <p class="text-muted">
+            Modifica la configuración de la evaluación.
+        </p>
+    </div>
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body p-4">
+
+            <form asp-action="Edit" method="post">
+
+                @Html.AntiForgeryToken()
+
+                <input type="hidden"
+                       asp-for="Id" />
+
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3"></div>
+
+                <div class="row g-4">
+
+                    <div class="col-12">
+
+                        <label asp-for="Titulo"
+                               class="form-label">
+                            Título del examen
+                        </label>
+
+                        <input asp-for="Titulo"
+                               class="form-control form-control-lg" />
+
+                        <span asp-validation-for="Titulo"
+                              class="text-danger"></span>
+
+                    </div>
+
+                    <div class="col-md-8">
+
+                        <label asp-for="MateriaId"
+                               class="form-label">
+                            Materia
+                        </label>
+
+                        <select asp-for="MateriaId"
+                                class="form-select">
+
+                            @if (materias != null)
+                            {
+                                foreach (var materia in materias)
+                                {
+                                    <option value="@materia.Id">
+                                        @materia.Codigo - @materia.Nombre
+                                    </option>
+                                }
+                            }
+
+                        </select>
+
+                        <span asp-validation-for="MateriaId"
+                              class="text-danger"></span>
+
+                    </div>
+
+                    <div class="col-md-4">
+
+                        <label asp-for="DuracionMinutos"
+                               class="form-label">
+                            Duración
+                        </label>
+
+                        <div class="input-group">
+
+                            <input asp-for="DuracionMinutos"
+                                   class="form-control"
+                                   type="number"
+                                   min="1"
+                                   max="600" />
+
+                            <span class="input-group-text">
+                                minutos
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-12">
+
+                        <label asp-for="Descripcion"
+                               class="form-label">
+                            Descripción
+                        </label>
+
+                        <textarea asp-for="Descripcion"
+                                  class="form-control"
+                                  rows="4"></textarea>
+
+                    </div>
+
+                    <div class="col-md-6">
+
+                        <label asp-for="FechaInicio"
+                               class="form-label">
+                            Inicio
+                        </label>
+
+                        <input asp-for="FechaInicio"
+                               type="datetime-local"
+                               class="form-control" />
+
+                    </div>
+
+                    <div class="col-md-6">
+
+                        <label asp-for="FechaFin"
+                               class="form-label">
+                            Finalización
+                        </label>
+
+                        <input asp-for="FechaFin"
+                               type="datetime-local"
+                               class="form-control" />
+
+                    </div>
+
+                    <div class="col-md-6">
+
+                        <div class="form-check form-switch mt-4">
+
+                            <input asp-for="RequiereVerificacionFacial"
+                                   class="form-check-input" />
+
+                            <label asp-for="RequiereVerificacionFacial"
+                                   class="form-check-label">
+                                Verificación facial
+                            </label>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-6">
+
+                        <div class="form-check form-switch mt-4">
+
+                            <input asp-for="Activo"
+                                   class="form-check-input" />
+
+                            <label asp-for="Activo"
+                                   class="form-check-label">
+                                Examen activo
+                            </label>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="mt-4 d-flex gap-2">
+
+                    <button type="submit"
+                            class="btn btn-dark">
+                        Guardar cambios
+                    </button>
+
+                    <a asp-action="Index"
+                       class="btn btn-outline-secondary">
+                        Cancelar
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

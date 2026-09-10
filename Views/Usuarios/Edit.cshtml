@@ -1,0 +1,287 @@
+@model EcommerceApp.Models.UsuarioEditViewModel
+
+@{
+    ViewData["Title"] = "Editar usuario";
+    var carreras = ViewBag.Carreras as List<EcommerceApp.Models.Carrera>
+        ?? new List<EcommerceApp.Models.Carrera>();
+}
+
+<div class="container py-5">
+
+    <div class="mb-4">
+        <span class="badge bg-dark mb-2">EXAMSECURE</span>
+
+        <h1 class="display-6 fw-bold">
+            Editar usuario
+        </h1>
+
+        <p class="text-muted">
+            Actualiza los datos personales y académicos.
+        </p>
+    </div>
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-9">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-header bg-dark text-white py-3">
+                    <strong>
+                        Información de @Model.Rol
+                    </strong>
+                </div>
+
+                <div class="card-body p-4">
+
+                    <form asp-action="Edit" method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <input asp-for="Id" type="hidden" />
+                        <input asp-for="Rol" type="hidden" />
+
+                        <div asp-validation-summary="ModelOnly"
+                             class="alert alert-danger">
+                        </div>
+
+                        <h5 class="fw-bold mb-3">
+                            Datos personales
+                        </h5>
+
+                        <div class="row g-3">
+
+                            <div class="col-md-4">
+                                <label asp-for="Nombres"
+                                       class="form-label">
+                                </label>
+
+                                <input asp-for="Nombres"
+                                       class="form-control" />
+
+                                <span asp-validation-for="Nombres"
+                                      class="text-danger">
+                                </span>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label asp-for="ApellidoPaterno"
+                                       class="form-label">
+                                </label>
+
+                                <input asp-for="ApellidoPaterno"
+                                       class="form-control" />
+
+                                <span asp-validation-for="ApellidoPaterno"
+                                      class="text-danger">
+                                </span>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label asp-for="ApellidoMaterno"
+                                       class="form-label">
+                                </label>
+
+                                <input asp-for="ApellidoMaterno"
+                                       class="form-control" />
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="CedulaIdentidad"
+                                       class="form-label">
+                                </label>
+
+                                <input asp-for="CedulaIdentidad"
+                                       class="form-control" />
+
+                                <span asp-validation-for="CedulaIdentidad"
+                                      class="text-danger">
+                                </span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="Telefono"
+                                       class="form-label">
+                                </label>
+
+                                <input asp-for="Telefono"
+                                       class="form-control" />
+                            </div>
+
+                            <div class="col-12">
+                                <label asp-for="Email"
+                                       class="form-label">
+                                </label>
+
+                                <input asp-for="Email"
+                                       class="form-control"
+                                       type="email" />
+
+                                <span asp-validation-for="Email"
+                                      class="text-danger">
+                                </span>
+                            </div>
+
+                        </div>
+
+                        @if (Model.Rol == "Estudiante")
+                        {
+                            <hr class="my-4" />
+
+                            <h5 class="fw-bold mb-3">
+                                Datos académicos
+                            </h5>
+
+                            <div class="row g-3">
+
+                                <div class="col-md-6">
+
+                                    <label asp-for="CarreraId"
+                                           class="form-label">
+                                    </label>
+
+                                    <select asp-for="CarreraId"
+                                            class="form-select">
+
+                                        <option value="">
+                                            Seleccione una carrera
+                                        </option>
+
+                                        @foreach (var carrera in carreras)
+                                        {
+                                            <option value="@carrera.Id">
+                                                @carrera.Nombre
+                                            </option>
+                                        }
+
+                                    </select>
+
+                                    <span asp-validation-for="CarreraId"
+                                          class="text-danger">
+                                    </span>
+
+                                </div>
+
+                                <div class="col-md-6">
+
+                                    <label asp-for="Semestre"
+                                           class="form-label">
+                                    </label>
+
+                                    <select asp-for="Semestre"
+                                            class="form-select">
+
+                                        <option value="">
+                                            Seleccione un semestre
+                                        </option>
+
+                                        @for (var i = 1; i <= 20; i++)
+                                        {
+                                            <option value="@i">
+                                                @i°
+                                            </option>
+                                        }
+
+                                    </select>
+
+                                    <span asp-validation-for="Semestre"
+                                          class="text-danger">
+                                    </span>
+
+                                </div>
+
+                            </div>
+                        }
+
+                        @if (Model.Rol == "Docente")
+                        {
+                            <hr class="my-4" />
+
+                            <h5 class="fw-bold mb-3">
+                                Información docente
+                            </h5>
+
+                            <div class="mb-3">
+
+                                <label asp-for="Especialidad"
+                                       class="form-label">
+                                </label>
+
+                                <input asp-for="Especialidad"
+                                       class="form-control"
+                                       placeholder="Ej. Bases de datos" />
+
+                            </div>
+                        }
+
+                        <hr class="my-4" />
+
+                        <h5 class="fw-bold mb-3">
+                            Seguridad
+                        </h5>
+
+                        <div class="mb-3">
+
+                            <label asp-for="NewPassword"
+                                   class="form-label">
+                            </label>
+
+                            <input asp-for="NewPassword"
+                                   class="form-control"
+                                   autocomplete="new-password"
+                                   placeholder="Dejar vacío para mantener la actual" />
+
+                            <div class="form-text">
+                                Solo completa este campo si deseas cambiar la contraseña.
+                            </div>
+
+                            <span asp-validation-for="NewPassword"
+                                  class="text-danger">
+                            </span>
+
+                        </div>
+
+                        <div class="form-check form-switch mb-4">
+
+                            <input asp-for="Activo"
+                                   class="form-check-input"
+                                   type="checkbox" />
+
+                            <label asp-for="Activo"
+                                   class="form-check-label fw-semibold">
+                            </label>
+
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+
+                            <a asp-action="Index"
+                               class="btn btn-outline-secondary">
+                                Cancelar
+                            </a>
+
+                            <button type="submit"
+                                    class="btn btn-dark">
+                                Guardar cambios
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync(
+            "_ValidationScriptsPartial");
+    }
+}

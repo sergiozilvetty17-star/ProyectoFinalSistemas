@@ -1,0 +1,141 @@
+﻿@model EcommerceApp.Models.Materia
+
+@{
+    ViewData["Title"] = "Nueva materia";
+    var docentes = ViewBag.Docentes as List<EcommerceApp.Models.Docente>;
+}
+
+<div class="container py-5">
+
+    <div class="mb-4">
+        <span class="badge bg-dark mb-2">EXAMSECURE</span>
+        <h1 class="fw-bold">Nueva materia</h1>
+        <p class="text-muted">
+            Registra una nueva materia académica.
+        </p>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+
+            <form asp-action="Create" method="post">
+
+                @Html.AntiForgeryToken()
+
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3"></div>
+
+                <div class="row g-3">
+
+                    <div class="col-md-4">
+                        <label asp-for="Codigo"
+                               class="form-label">
+                            Código
+                        </label>
+
+                        <input asp-for="Codigo"
+                               class="form-control"
+                               placeholder="Ej. SIS-101" />
+
+                        <span asp-validation-for="Codigo"
+                              class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-8">
+                        <label asp-for="Nombre"
+                               class="form-label">
+                            Nombre de la materia
+                        </label>
+
+                        <input asp-for="Nombre"
+                               class="form-control"
+                               placeholder="Ej. Programación I" />
+
+                        <span asp-validation-for="Nombre"
+                              class="text-danger"></span>
+                    </div>
+
+                    <div class="col-12">
+                        <label asp-for="Descripcion"
+                               class="form-label">
+                            Descripción
+                        </label>
+
+                        <textarea asp-for="Descripcion"
+                                  class="form-control"
+                                  rows="4"
+                                  placeholder="Descripción de la materia"></textarea>
+
+                        <span asp-validation-for="Descripcion"
+                              class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-8">
+                        <label asp-for="DocenteId"
+                               class="form-label">
+                            Docente responsable
+                        </label>
+
+                        <select asp-for="DocenteId"
+                                class="form-select">
+
+                            <option value="">
+                                -- Sin docente asignado --
+                            </option>
+
+                            @if (docentes != null)
+                            {
+                                foreach (var docente in docentes)
+                                {
+                                    <option value="@docente.Id">
+                                        @docente.Usuario?.NombreCompleto
+                                    </option>
+                                }
+                            }
+
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">
+                            Estado
+                        </label>
+
+                        <div class="form-check form-switch mt-2">
+                            <input asp-for="Activa"
+                                   class="form-check-input"
+                                   checked />
+
+                            <label asp-for="Activa"
+                                   class="form-check-label">
+                                Materia activa
+                            </label>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="mt-4 d-flex gap-2">
+
+                    <button type="submit"
+                            class="btn btn-dark">
+                        Guardar materia
+                    </button>
+
+                    <a asp-action="Index"
+                       class="btn btn-outline-secondary">
+                        Cancelar
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

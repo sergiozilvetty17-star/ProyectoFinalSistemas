@@ -1,0 +1,81 @@
+﻿@{
+    ViewData["Title"] = "Panel Docente";
+}
+
+<div class="container py-5">
+
+    <div class="mb-5">
+        <span class="badge bg-dark mb-2">EXAMSECURE</span>
+
+        <h1 class="display-5 fw-bold">
+            Panel de Docente
+        </h1>
+
+        <p class="text-muted">
+            Gestiona tus materias, exámenes y resultados.
+        </p>
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body p-4">
+
+                    <h4>Mis materias</h4>
+
+                    <p class="text-muted">
+                        Consulta las materias que tienes asignadas.
+                    </p>
+
+                    <a asp-controller="Materias"
+                       asp-action="Index"
+                       class="btn btn-outline-dark">
+                        Ver materias
+                    </a>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body p-4">
+
+                    <h4>Exámenes</h4>
+
+                    <p class="text-muted">
+                        Crea, configura y publica tus evaluaciones.
+                    </p>
+
+                    <a asp-controller="Examenes"
+                       asp-action="Index"
+                       class="btn btn-dark">
+                        Administrar exámenes
+                    </a>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body p-4">
+
+                    <h4>Resultados</h4>
+
+                    <p class="text-muted">
+                        Consulta las calificaciones y resultados de tus estudiantes.
+                    </p>
+
+                    <button class="btn btn-outline-secondary" disabled>
+                        Próximamente
+                    </button>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>

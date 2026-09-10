@@ -1,0 +1,69 @@
+@{
+    ViewData["Title"] = "Administrador";
+}
+
+<div class="container py-5">
+
+    <div class="mb-5">
+        <span class="badge bg-dark mb-2">EXAMSECURE</span>
+
+        <h1 class="display-5 fw-bold">
+            Panel de Administrador
+        </h1>
+
+        <p class="text-muted">
+            Administración general del sistema de exámenes online.
+        </p>
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h4>Usuarios</h4>
+                    <p class="text-muted">
+                        Crear y administrar estudiantes y docentes.
+                    </p>
+
+                    <a asp-controller="Usuarios"
+                       asp-action="Index"
+                       class="btn btn-dark">
+                        Administrar usuarios
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h4>Registro facial</h4>
+                    <p class="text-muted">
+                        Registrar y actualizar la identidad facial de los estudiantes.
+                    </p>
+
+                    <button class="btn btn-dark" disabled>
+                        Próximamente
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h4>Seguridad</h4>
+                    <p class="text-muted">
+                        Revisar eventos y actividad sospechosa.
+                    </p>
+
+                    <button class="btn btn-dark" disabled>
+                        Próximamente
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
