@@ -1,3 +1,4 @@
+ï»¿using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using EcommerceApp.Data;
@@ -32,7 +33,19 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 builder.Services.AddControllersWithViews();
 
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders =
+        ForwardedHeaders.XForwardedFor |
+        ForwardedHeaders.XForwardedProto;
+
+    options.KnownIPNetworks.Clear();
+    options.KnownProxies.Clear();
+});
+
 var app = builder.Build();
+
+app.UseForwardedHeaders();
 
 if (!app.Environment.IsDevelopment())
 {
@@ -83,11 +96,11 @@ using (var scope = app.Services.CreateScope())
 
     var carreras = new[]
     {
-        "Ingeniería de Sistemas",
+        "IngenierÃ­a de Sistemas",
         "Derecho",
-        "Ingeniería Comercial",
-        "Administración de Empresas",
-        "Contaduría Pública"
+        "IngenierÃ­a Comercial",
+        "AdministraciÃ³n de Empresas",
+        "ContadurÃ­a PÃºblica"
     };
 
     foreach (var nombreCarrera in carreras)
@@ -210,3 +223,4 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.Run();
+
