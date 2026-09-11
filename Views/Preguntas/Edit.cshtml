@@ -1,0 +1,150 @@
+﻿@model EcommerceApp.Models.PreguntaCreateViewModel
+
+@{
+    ViewData["Title"] = "Editar pregunta";
+    var examen = ViewBag.Examen as EcommerceApp.Models.Examen;
+}
+
+<div class="page-shell">
+
+    <div class="page-hero">
+        <div>
+            <span class="eyebrow">CONSTRUCTOR DE EXAMEN</span>
+
+            <h1>Editar pregunta</h1>
+
+            <p>
+                @(examen?.Titulo ?? "Examen")
+            </p>
+        </div>
+
+        <a asp-action="Index"
+           asp-route-examenId="@Model.ExamenId"
+           class="btn btn-secondary">
+            ← Volver
+        </a>
+    </div>
+
+    <div class="glass-card">
+
+        <div class="section-header">
+            <div>
+                <h2>Modificar pregunta</h2>
+                <p>
+                    Actualiza el contenido y la puntuación.
+                </p>
+            </div>
+        </div>
+
+        <form asp-action="Edit"
+              method="post"
+              class="examsecure-form">
+
+            @Html.AntiForgeryToken()
+
+            <input type="hidden"
+                   name="id"
+                   value="@Context.Request.RouteValues["id"]" />
+
+            <input asp-for="ExamenId"
+                   type="hidden" />
+
+            <div asp-validation-summary="ModelOnly"
+                 class="validation-summary"></div>
+
+            <div class="form-group">
+
+                <label asp-for="Enunciado">
+                    Enunciado
+                </label>
+
+                <textarea asp-for="Enunciado"
+                          class="form-control"
+                          rows="6"></textarea>
+
+                <span asp-validation-for="Enunciado"
+                      class="text-danger">
+                </span>
+
+            </div>
+
+            <div class="form-layout form-layout-small">
+
+                <div class="form-group">
+
+                    <label asp-for="Tipo">
+                        Tipo de pregunta
+                    </label>
+
+                    <select asp-for="Tipo"
+                            asp-items="Html.GetEnumSelectList<EcommerceApp.Models.TipoPregunta>()"
+                            class="form-control">
+                    </select>
+
+                    <span asp-validation-for="Tipo"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label asp-for="Puntaje">
+                        Puntaje
+                    </label>
+
+                    <input asp-for="Puntaje"
+                           type="number"
+                           step="0.01"
+                           min="0.01"
+                           class="form-control" />
+
+                    <span asp-validation-for="Puntaje"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+            </div>
+
+            <div class="form-group">
+
+                <label asp-for="Orden">
+                    Orden
+                </label>
+
+                <input asp-for="Orden"
+                       type="number"
+                       min="1"
+                       class="form-control" />
+
+                <span asp-validation-for="Orden"
+                      class="text-danger">
+                </span>
+
+            </div>
+
+            <div class="form-actions">
+
+                <a asp-action="Index"
+                   asp-route-examenId="@Model.ExamenId"
+                   class="btn btn-secondary">
+                    Cancelar
+                </a>
+
+                <button type="submit"
+                        class="btn btn-primary">
+                    Guardar cambios
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,198 @@
+﻿@model IEnumerable<EcommerceApp.Models.Pregunta>
+
+@{
+    ViewData["Title"] = "Preguntas";
+    var examen = ViewBag.Examen as EcommerceApp.Models.Examen;
+}
+
+<div class="page-shell">
+
+    <div class="page-hero">
+        <div>
+            <span class="eyebrow">CONSTRUCTOR DE EXAMEN</span>
+
+            <h1>
+                @(examen?.Titulo ?? "Examen")
+            </h1>
+
+            <p>
+                @(examen?.Materia?.Nombre ?? "Materia")
+                · @Model.Count() pregunta(s)
+            </p>
+        </div>
+
+        <div class="hero-actions">
+            <a asp-action="Create"
+               asp-route-examenId="@examen?.Id"
+               class="btn btn-primary">
+                ＋ Nueva pregunta
+            </a>
+
+            <a asp-controller="Examenes"
+               asp-action="Index"
+               class="btn btn-secondary">
+                ← Mis exámenes
+            </a>
+        </div>
+    </div>
+
+    <div class="glass-card">
+
+        @if (!Model.Any())
+        {
+            <div class="empty-state">
+
+                <div class="empty-state-icon">
+                    ?
+                </div>
+
+                <h3>Este examen todavía no tiene preguntas</h3>
+
+                <p>
+                    Agrega la primera pregunta para comenzar
+                    a construir la evaluación.
+                </p>
+
+                <a asp-action="Create"
+                   asp-route-examenId="@examen?.Id"
+                   class="btn btn-primary">
+                    Crear primera pregunta
+                </a>
+
+            </div>
+        }
+        else
+        {
+            <div class="question-list">
+
+                @foreach (var pregunta in Model)
+                {
+                    <article class="question-card">
+
+                        <div class="question-number">
+                            @pregunta.Orden
+                        </div>
+
+                        <div class="question-content">
+
+                            <div class="question-header">
+
+                                <div>
+                                    <span class="question-type">
+                                        @pregunta.Tipo
+                                    </span>
+
+                                    <span class="question-score">
+                                        @pregunta.Puntaje pts
+                                    </span>
+                                </div>
+
+                                <div class="action-group">
+
+                                    <a asp-action="Edit"
+                                       asp-route-id="@pregunta.Id"
+                                       class="btn btn-sm btn-secondary">
+                                        Editar
+                                    </a>
+
+                                    <form asp-action="Delete"
+                                          method="post"
+                                          class="inline-form"
+                                          onsubmit="return confirm('¿Eliminar esta pregunta? También se eliminarán sus opciones.');">
+
+                                        @Html.AntiForgeryToken()
+
+                                        <input type="hidden"
+                                               name="id"
+                                               value="@pregunta.Id" />
+
+                                        <button type="submit"
+                                                class="btn btn-sm btn-danger">
+                                            Eliminar
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            </div>
+
+                            <h3>
+                                @pregunta.Enunciado
+                            </h3>
+
+                            @if (pregunta.Tipo != EcommerceApp.Models.TipoPregunta.RespuestaAbierta)
+                            {
+                                <div class="question-options">
+
+                                    @if (!pregunta.Opciones.Any())
+                                    {
+                                        <div class="option-empty">
+                                            <span>!</span>
+                                            Esta pregunta todavía no tiene opciones.
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        @foreach (var opcion in pregunta.Opciones.OrderBy(o => o.Orden))
+                                        {
+                                            <div class="question-option @(opcion.EsCorrecta ? "correct-option" : "")">
+
+                                                <span class="option-marker">
+                                                    @(Convert.ToChar(65 + opcion.Orden))
+                                                </span>
+
+                                                <span class="option-text">
+                                                    @opcion.Texto
+                                                </span>
+
+                                                @if (opcion.EsCorrecta)
+                                                {
+                                                    <span class="correct-label">
+                                                        ✓ Correcta
+                                                    </span>
+                                                }
+
+                                            </div>
+                                        }
+                                    }
+
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="open-answer-preview">
+                                    <span>✎</span>
+                                    Respuesta abierta
+                                </div>
+                            }
+
+                            @if (pregunta.Tipo != EcommerceApp.Models.TipoPregunta.RespuestaAbierta)
+                            {
+                                <div class="question-footer">
+
+                                    <span>
+                                        @pregunta.Opciones.Count opción(es)
+                                    </span>
+
+                                    <a asp-controller="Opciones"
+                                       asp-action="Index"
+                                       asp-route-preguntaId="@pregunta.Id"
+                                       class="btn btn-sm btn-primary">
+                                        Gestionar opciones →
+                                    </a>
+
+                                </div>
+                            }
+
+                        </div>
+
+                    </article>
+                }
+
+            </div>
+        }
+
+    </div>
+
+</div>

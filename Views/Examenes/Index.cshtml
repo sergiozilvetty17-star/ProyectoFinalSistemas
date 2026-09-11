@@ -156,7 +156,21 @@
 
                                     <div class="d-flex justify-content-end gap-2">
 
-                                        <a asp-action="Edit"
+                                        <a asp-controller="Preguntas"
+   asp-action="Index"
+   asp-route-examenId="@examen.Id"
+   class="btn btn-sm btn-primary">
+    Preguntas
+</a>
+
+<a asp-controller="Preguntas"
+   asp-action="Index"
+   asp-route-examenId="@examen.Id"
+   class="btn btn-sm btn-primary">
+    Preguntas
+</a>
+
+<a asp-action="Edit"
                                            asp-route-id="@examen.Id"
                                            class="examsecure-btn examsecure-btn-secondary btn-sm">
                                             Editar
@@ -215,3 +229,5 @@
     }
 
 </div>
+
+

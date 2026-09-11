@@ -1,0 +1,150 @@
+﻿@model EcommerceApp.Models.InscripcionCreateViewModel
+
+@{
+    ViewData["Title"] = "Nueva inscripción";
+}
+
+<div class="page-shell">
+
+    <div class="page-hero">
+        <div>
+            <span class="eyebrow">GESTIÓN ACADÉMICA</span>
+
+            <h1>Nueva inscripción</h1>
+
+            <p>
+                Vincula un estudiante con una materia para habilitar
+                posteriormente sus evaluaciones.
+            </p>
+        </div>
+
+        <a asp-action="Index" class="btn btn-secondary">
+            ← Volver
+        </a>
+    </div>
+
+    <div class="form-layout">
+
+        <div class="glass-card">
+
+            <div class="section-header">
+                <div>
+                    <h2>Datos de inscripción</h2>
+                    <p>
+                        Selecciona el estudiante y la materia.
+                    </p>
+                </div>
+            </div>
+
+            <form asp-action="Create"
+                  method="post"
+                  class="examsecure-form">
+
+                @Html.AntiForgeryToken()
+
+                <div asp-validation-summary="ModelOnly"
+                     class="validation-summary"></div>
+
+                <div class="form-group">
+
+                    <label asp-for="EstudianteId">
+                        Estudiante
+                    </label>
+
+                    <select asp-for="EstudianteId"
+                            asp-items="ViewBag.Estudiantes"
+                            class="form-control">
+
+                        <option value="">
+                            Seleccionar estudiante...
+                        </option>
+
+                    </select>
+
+                    <span asp-validation-for="EstudianteId"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label asp-for="MateriaId">
+                        Materia
+                    </label>
+
+                    <select asp-for="MateriaId"
+                            asp-items="ViewBag.Materias"
+                            class="form-control">
+
+                        <option value="">
+                            Seleccionar materia...
+                        </option>
+
+                    </select>
+
+                    <span asp-validation-for="MateriaId"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+                <div class="form-actions">
+
+                    <a asp-action="Index"
+                       class="btn btn-secondary">
+                        Cancelar
+                    </a>
+
+                    <button type="submit"
+                            class="btn btn-primary">
+                        Registrar inscripción
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+        <div class="glass-card info-card">
+
+            <div class="info-icon">
+                ✓
+            </div>
+
+            <h3>¿Qué habilita una inscripción?</h3>
+
+            <p>
+                La inscripción establece oficialmente que el estudiante
+                pertenece a una materia.
+            </p>
+
+            <div class="info-list">
+
+                <div>
+                    <span>01</span>
+                    <p>El estudiante queda vinculado a la materia.</p>
+                </div>
+
+                <div>
+                    <span>02</span>
+                    <p>Podrá acceder posteriormente a sus evaluaciones.</p>
+                </div>
+
+                <div>
+                    <span>03</span>
+                    <p>El sistema podrá controlar sus intentos y resultados.</p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
