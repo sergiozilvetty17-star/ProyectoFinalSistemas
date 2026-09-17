@@ -1,0 +1,473 @@
+﻿@model EcommerceApp.Models.Estudiante
+
+@{
+    ViewData["Title"] = "Registro facial";
+    var tieneRegistro = ViewBag.TieneRegistroFacial is true;
+}
+
+<div class="container py-5">
+
+    <div class="mb-4">
+        <span class="badge bg-dark mb-2">EXAMSECURE</span>
+
+        <h1 class="display-6 fw-bold mb-1">
+            Registro facial
+        </h1>
+
+        <p class="text-muted mb-0">
+            Registra la identidad facial del estudiante para futuras verificaciones.
+        </p>
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-lg-7">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-header bg-dark text-white py-3">
+                    <strong>Cámara</strong>
+                </div>
+
+                <div class="card-body">
+
+                    <div class="position-relative rounded overflow-hidden bg-dark">
+
+                        <video id="video"
+                               autoplay
+                               muted
+                               playsinline
+                               class="w-100"
+                               style="min-height: 420px; object-fit: cover;">
+                        </video>
+
+                        <canvas id="overlay"
+                                class="position-absolute top-0 start-0 w-100 h-100"
+                                style="pointer-events:none;">
+                        </canvas>
+
+                    </div>
+
+                    <div id="estado"
+                         class="alert alert-secondary mt-3 mb-0">
+                        Cargando modelos faciales...
+                    </div>
+
+                    <div class="d-flex gap-2 mt-3">
+
+                        <button type="button"
+                                id="btnCamara"
+                                class="btn btn-dark"
+                                disabled>
+                            Activar cámara
+                        </button>
+
+                        <button type="button"
+                                id="btnRegistrar"
+                                class="btn btn-primary"
+                                disabled>
+                            Registrar rostro
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-5">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-header bg-dark text-white py-3">
+                    <strong>Estudiante</strong>
+                </div>
+
+                <div class="card-body">
+
+                    <h4 class="mb-3">
+                        @Model.Usuario?.NombreCompleto
+                    </h4>
+
+                    <dl class="row mb-0">
+
+                        <dt class="col-sm-5">
+                            C.I.
+                        </dt>
+
+                        <dd class="col-sm-7">
+                            @(Model.Usuario?.CedulaIdentidad ?? "No registrada")
+                        </dd>
+
+                        <dt class="col-sm-5">
+                            Carrera
+                        </dt>
+
+                        <dd class="col-sm-7">
+                            @(Model.Carrera?.Nombre ?? "Sin carrera")
+                        </dd>
+
+                        <dt class="col-sm-5">
+                            Semestre
+                        </dt>
+
+                        <dd class="col-sm-7">
+                            @(Model.Semestre?.ToString() ?? "No registrado")
+                        </dd>
+
+                    </dl>
+
+                    <hr />
+
+                    @if (tieneRegistro)
+                    {
+                        <div class="alert alert-warning mb-0">
+                            Este estudiante ya tiene un registro facial.
+                            Si continúas, será reemplazado.
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info mb-0">
+                            Este estudiante todavía no tiene un registro facial.
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+
+            <div class="card shadow-sm border-0 mt-4">
+
+                <div class="card-body">
+
+                    <h5 class="fw-bold">
+                        Recomendaciones
+                    </h5>
+
+                    <ul class="mb-0">
+                        <li>Utiliza buena iluminación.</li>
+                        <li>Mantén el rostro centrado.</li>
+                        <li>Mira directamente a la cámara.</li>
+                        <li>No registres más de un rostro.</li>
+                        <li>Evita cubrir parcialmente el rostro.</li>
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="mt-4">
+
+        <a asp-controller="Usuarios"
+           asp-action="Index"
+           class="btn btn-outline-secondary">
+            Volver a usuarios
+        </a>
+
+    </div>
+
+</div>
+
+@section Scripts {
+
+    <script src="~/js/facial/face-api.js"></script>
+
+    <script>
+
+        const estudianteId = "@Model.Usuario?.Id";
+
+        const video = document.getElementById("video");
+        const overlay = document.getElementById("overlay");
+
+        const estado = document.getElementById("estado");
+        const btnCamara = document.getElementById("btnCamara");
+        const btnRegistrar = document.getElementById("btnRegistrar");
+
+        let stream = null;
+        let descriptorActual = null;
+        let modelosCargados = false;
+
+        async function cargarModelos() {
+
+            try {
+
+                estado.className = "alert alert-secondary mt-3 mb-0";
+                estado.textContent = "Cargando modelos faciales...";
+
+                const ruta = "/models/face";
+
+                await faceapi.nets.tinyFaceDetector.loadFromUri(ruta);
+                await faceapi.nets.faceLandmark68Net.loadFromUri(ruta);
+                await faceapi.nets.faceRecognitionNet.loadFromUri(ruta);
+
+                modelosCargados = true;
+
+                btnCamara.disabled = false;
+
+                estado.className = "alert alert-success mt-3 mb-0";
+                estado.textContent =
+                    "Modelos cargados correctamente. Puedes activar la cámara.";
+
+            }
+            catch (error) {
+
+                console.error(error);
+
+                estado.className = "alert alert-danger mt-3 mb-0";
+                estado.textContent =
+                    "No se pudieron cargar los modelos faciales.";
+
+            }
+        }
+
+        async function activarCamara() {
+
+            if (!modelosCargados)
+                return;
+
+            try {
+
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 },
+                        facingMode: "user"
+                    },
+                    audio: false
+                });
+
+                video.srcObject = stream;
+
+                estado.className = "alert alert-info mt-3 mb-0";
+                estado.textContent =
+                    "Cámara activa. Coloca un solo rostro frente a la cámara.";
+
+                btnCamara.disabled = true;
+
+                video.addEventListener(
+                    "play",
+                    iniciarDeteccion,
+                    { once: true }
+                );
+
+            }
+            catch (error) {
+
+                console.error(error);
+
+                estado.className = "alert alert-danger mt-3 mb-0";
+                estado.textContent =
+                    "No se pudo acceder a la cámara. Revisa los permisos del navegador.";
+
+            }
+        }
+
+        async function iniciarDeteccion() {
+
+            const opciones = new faceapi.TinyFaceDetectorOptions({
+                inputSize: 320,
+                scoreThreshold: 0.5
+            });
+
+            const detectar = async () => {
+
+                if (!stream)
+                    return;
+
+                const detecciones =
+                    await faceapi
+                        .detectAllFaces(video, opciones)
+                        .withFaceLandmarks()
+                        .withFaceDescriptors();
+
+                const displaySize = {
+                    width: video.videoWidth,
+                    height: video.videoHeight
+                };
+
+                if (
+                    displaySize.width === 0 ||
+                    displaySize.height === 0
+                ) {
+                    requestAnimationFrame(detectar);
+                    return;
+                }
+
+                overlay.width = displaySize.width;
+                overlay.height = displaySize.height;
+
+                const resized =
+                    faceapi.resizeResults(
+                        detecciones,
+                        displaySize
+                    );
+
+                const ctx = overlay.getContext("2d");
+
+                ctx.clearRect(
+                    0,
+                    0,
+                    overlay.width,
+                    overlay.height
+                );
+
+                faceapi.draw.drawDetections(
+                    overlay,
+                    resized
+                );
+
+                if (detecciones.length === 1) {
+
+                    descriptorActual =
+                        detecciones[0].descriptor;
+
+                    estado.className =
+                        "alert alert-success mt-3 mb-0";
+
+                    estado.textContent =
+                        "Rostro detectado correctamente. Puedes registrarlo.";
+
+                    btnRegistrar.disabled = false;
+
+                }
+                else {
+
+                    descriptorActual = null;
+                    btnRegistrar.disabled = true;
+
+                    estado.className =
+                        "alert alert-warning mt-3 mb-0";
+
+                    if (detecciones.length === 0) {
+
+                        estado.textContent =
+                            "No se detectó ningún rostro.";
+
+                    }
+                    else {
+
+                        estado.textContent =
+                            "Se detectaron varios rostros. Debe haber exactamente uno.";
+
+                    }
+                }
+
+                requestAnimationFrame(detectar);
+            };
+
+            detectar();
+        }
+
+        async function registrarRostro() {
+
+            if (!descriptorActual)
+                return;
+
+            btnRegistrar.disabled = true;
+
+            estado.className =
+                "alert alert-secondary mt-3 mb-0";
+
+            estado.textContent =
+                "Guardando registro facial...";
+
+            try {
+
+                const descriptor =
+                    Array.from(descriptorActual)
+                        .join(",");
+
+                const token =
+                    document.querySelector(
+                        'input[name="__RequestVerificationToken"]'
+                    )?.value;
+
+                const formData = new URLSearchParams();
+
+                formData.append(
+                    "estudianteId",
+                    estudianteId
+                );
+
+                formData.append(
+                    "descriptor",
+                    descriptor
+                );
+
+                formData.append(
+                    "__RequestVerificationToken",
+                    token
+                );
+
+                const respuesta = await fetch(
+                    "/RegistroFacial/Guardar",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type":
+                                "application/x-www-form-urlencoded"
+                        },
+                        body: formData
+                    }
+                );
+
+                const resultado =
+                    await respuesta.json();
+
+                if (!respuesta.ok || !resultado.success) {
+
+                    throw new Error(
+                        resultado.message ||
+                        "No se pudo guardar el registro."
+                    );
+
+                }
+
+                estado.className =
+                    "alert alert-success mt-3 mb-0";
+
+                estado.textContent =
+                    resultado.message;
+
+            }
+            catch (error) {
+
+                console.error(error);
+
+                estado.className =
+                    "alert alert-danger mt-3 mb-0";
+
+                estado.textContent =
+                    error.message ||
+                    "Ocurrió un error al registrar el rostro.";
+
+                btnRegistrar.disabled = false;
+
+            }
+        }
+
+        btnCamara.addEventListener(
+            "click",
+            activarCamara
+        );
+
+        btnRegistrar.addEventListener(
+            "click",
+            registrarRostro
+        );
+
+        cargarModelos();
+
+    </script>
+}
+
+<form style="display:none;">
+    @Html.AntiForgeryToken()
+</form>

@@ -1,4 +1,4 @@
-@model IEnumerable<EcommerceApp.Models.ApplicationUser>
+﻿@model IEnumerable<EcommerceApp.Models.ApplicationUser>
 
 @{
     ViewData["Title"] = "Usuarios";
@@ -136,7 +136,7 @@
                             </td>
 
                             <td>
-                                @(usuario.CedulaIdentidad ?? "�")
+                                @(usuario.CedulaIdentidad ?? "ï¿½")
                             </td>
 
                             <td>
@@ -202,6 +202,16 @@
                                        class="btn btn-sm btn-outline-dark">
                                         Editar
                                     </a>
+
+                                    @if (rol == "Estudiante")
+                                    {
+                                        <a asp-controller="RegistroFacial"
+                                           asp-action="Registrar"
+                                           asp-route-id="@usuario.Id"
+                                           class="btn btn-sm btn-outline-primary">
+                                            Registrar rostro
+                                        </a>
+                                    }
 
                                     <form asp-action="ToggleEstado"
                                           method="post"
