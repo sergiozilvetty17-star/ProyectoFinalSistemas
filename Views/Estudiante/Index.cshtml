@@ -1,0 +1,192 @@
+﻿@using EcommerceApp.Models
+@{
+    ViewData["Title"] = "Mis exámenes";
+
+    var estudiante = ViewBag.Estudiante as Estudiante;
+    var examenes = ViewBag.Examenes as List<Examen> ?? new List<Examen>();
+}
+
+<div class="container py-4">
+
+    <div class="mb-4">
+        <div class="small text-uppercase text-secondary fw-semibold">
+            Área del estudiante
+        </div>
+
+        <h1 class="display-6 fw-bold mb-1">
+            Mis exámenes
+        </h1>
+
+        @if (estudiante?.Usuario != null)
+        {
+            <p class="text-secondary mb-0">
+                Bienvenido, @estudiante.Usuario.NombreCompleto
+            </p>
+        }
+    </div>
+
+    @if (estudiante != null)
+    {
+        <div class="row g-3 mb-4">
+
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="small text-secondary mb-1">
+                            Carrera
+                        </div>
+
+                        <div class="fs-5 fw-semibold">
+                            @(estudiante.Carrera?.Nombre ?? "Sin carrera registrada")
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="small text-secondary mb-1">
+                            Semestre
+                        </div>
+
+                        <div class="fs-5 fw-semibold">
+                            @(estudiante.Semestre?.ToString() ?? "No registrado")
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="small text-secondary mb-1">
+                            Exámenes disponibles
+                        </div>
+
+                        <div class="fs-5 fw-semibold">
+                            @examenes.Count
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    }
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h2 class="h4 fw-bold mb-1">
+                Exámenes disponibles
+            </h2>
+
+            <p class="text-secondary mb-0">
+                Estos exámenes corresponden a tus materias inscritas.
+            </p>
+        </div>
+    </div>
+
+    @if (!examenes.Any())
+    {
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center py-5">
+                <h3 class="h5 fw-semibold">
+                    No tienes exámenes disponibles
+                </h3>
+
+                <p class="text-secondary mb-0">
+                    Cuando un docente publique un examen correspondiente a una
+                    de tus materias, aparecerá aquí.
+                </p>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+
+            @foreach (var examen in examenes)
+            {
+                <div class="col-lg-6">
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body p-4">
+
+                            <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                                <div>
+                                    <div class="small text-secondary mb-1">
+                                        @(examen.Materia?.Codigo ?? "Materia")
+                                    </div>
+
+                                    <h3 class="h5 fw-bold mb-1">
+                                        @examen.Titulo
+                                    </h3>
+
+                                    <div class="text-secondary">
+                                        @(examen.Materia?.Nombre ?? "Materia no disponible")
+                                    </div>
+                                </div>
+
+                                <span class="badge bg-success">
+                                    Disponible
+                                </span>
+                            </div>
+
+                            @if (!string.IsNullOrWhiteSpace(examen.Descripcion))
+                            {
+                                <p class="text-secondary mb-4">
+                                    @examen.Descripcion
+                                </p>
+                            }
+
+                            <div class="row g-3 mb-4">
+
+                                <div class="col-6">
+                                    <div class="small text-secondary">
+                                        Duración
+                                    </div>
+
+                                    <div class="fw-semibold">
+                                        @examen.DuracionMinutos minutos
+                                    </div>
+                                </div>
+
+                                <div class="col-6">
+                                    <div class="small text-secondary">
+                                        Preguntas
+                                    </div>
+
+                                    <div class="fw-semibold">
+                                        @examen.Preguntas.Count
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="small text-secondary">
+                                        Disponible hasta
+                                    </div>
+
+                                    <div class="fw-semibold">
+                                        @examen.FechaFin.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <a asp-controller="Estudiante"
+                               asp-action="IniciarExamen"
+                               asp-route-id="@examen.Id"
+                               class="btn btn-primary w-100">
+                                Iniciar examen
+                            </a>
+
+                        </div>
+
+                    </div>
+                </div>
+            }
+
+        </div>
+    }
+
+</div>

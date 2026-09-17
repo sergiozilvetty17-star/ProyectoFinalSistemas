@@ -1,0 +1,206 @@
+﻿@model EcommerceApp.Models.IntentoExamen
+
+@{
+    ViewData["Title"] = "Verificación de identidad";
+    var examen = Model.Examen;
+}
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-7">
+
+            <div class="text-center mb-4">
+
+                <div class="small text-uppercase text-secondary fw-semibold mb-2">
+                    Seguridad de ExamSecure
+                </div>
+
+                <h1 class="display-6 fw-bold">
+                    Verificación de identidad
+                </h1>
+
+                <p class="text-secondary mb-0">
+                    Antes de comenzar el examen necesitamos verificar tu identidad.
+                </p>
+
+            </div>
+
+            <div class="card border-0 shadow-sm overflow-hidden">
+
+                <div class="card-body p-4 p-md-5">
+
+                    <div class="text-center mb-4">
+
+                        <h2 class="h4 fw-bold mb-2">
+                            @(examen?.Titulo ?? "Examen")
+                        </h2>
+
+                        <p class="text-secondary mb-0">
+                            @(examen?.Materia?.Nombre ?? "Materia")
+                        </p>
+
+                    </div>
+
+                    <div class="alert alert-secondary border-0 mb-4">
+                        <div class="fw-semibold mb-1">
+                            Antes de continuar
+                        </div>
+
+                        <div class="small">
+                            Permite el acceso a la cámara cuando el navegador lo solicite.
+                            Debes colocarte frente a la cámara y mantener tu rostro visible.
+                        </div>
+                    </div>
+
+                    <div class="camera-container rounded-4 overflow-hidden mb-4"
+                         style="background: #111; min-height: 360px;">
+
+                        <video id="video"
+                               class="w-100 h-100"
+                               autoplay
+                               muted
+                               playsinline
+                               style="display: block; min-height: 360px; object-fit: cover;">
+                        </video>
+
+                        <canvas id="canvas" style="display:none;"></canvas>
+
+                    </div>
+
+                    <div id="cameraStatus"
+                         class="text-center text-secondary small mb-4">
+                        Preparando cámara...
+                    </div>
+
+                    <div class="d-grid gap-2">
+
+                        <button type="button"
+                                id="btnVerificar"
+                                class="btn btn-primary btn-lg"
+                                disabled>
+                            Verificar identidad
+                        </button>
+
+                        <a asp-action="Index"
+                           class="btn btn-outline-secondary">
+                            Cancelar
+                        </a>
+
+                    </div>
+
+                    <div id="verificationResult"
+                         class="mt-4"
+                         style="display:none;">
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts
+{
+    <script>
+        const video = document.getElementById("video");
+        const canvas = document.getElementById("canvas");
+        const status = document.getElementById("cameraStatus");
+        const button = document.getElementById("btnVerificar");
+        const result = document.getElementById("verificationResult");
+
+        let stream = null;
+
+        async function iniciarCamara() {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: "user",
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    },
+                    audio: false
+                });
+
+                video.srcObject = stream;
+
+                status.textContent =
+                    "Cámara activa. Coloca tu rostro frente a la cámara.";
+
+                button.disabled = false;
+
+            } catch (error) {
+
+                console.error(error);
+
+                status.textContent =
+                    "No fue posible acceder a la cámara.";
+
+                result.style.display = "block";
+
+                result.innerHTML = `
+                    <div class="alert alert-danger border-0">
+                        Debes permitir el acceso a la cámara
+                        para continuar con el examen.
+                    </div>
+                `;
+            }
+        }
+
+        button.addEventListener("click", async function () {
+
+            button.disabled = true;
+
+            status.textContent =
+                "Capturando imagen...";
+
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+
+            const context = canvas.getContext("2d");
+
+            context.drawImage(
+                video,
+                0,
+                0,
+                canvas.width,
+                canvas.height
+            );
+
+            const imageData =
+                canvas.toDataURL("image/jpeg", 0.9);
+
+            console.log("Imagen capturada:", imageData.length);
+
+            status.textContent =
+                "Captura realizada. La verificación facial se conectará en el siguiente paso.";
+
+            result.style.display = "block";
+
+            result.innerHTML = `
+                <div class="alert alert-info border-0">
+                    Captura realizada correctamente.
+                    El motor de reconocimiento facial será integrado
+                    en el siguiente paso.
+                </div>
+            `;
+
+            button.disabled = false;
+        });
+
+        window.addEventListener("beforeunload", function () {
+
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+
+        });
+
+        iniciarCamara();
+    </script>
+}
