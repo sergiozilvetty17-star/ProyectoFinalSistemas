@@ -1,0 +1,136 @@
+﻿@model EcommerceApp.Models.IntentoExamen
+
+@{
+    ViewData["Title"] = "Resultado del examen";
+
+    var examen = Model.Examen;
+    var respuestas = Model.Respuestas ?? new List<EcommerceApp.Models.Respuesta>();
+
+    var totalPuntos = respuestas
+        .Where(r => r.Pregunta != null)
+        .Sum(r => r.Pregunta!.Puntaje);
+
+    var porcentaje = totalPuntos > 0 && Model.Calificacion.HasValue
+        ? (Model.Calificacion.Value / totalPuntos) * 100
+        : 0;
+}
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-8">
+
+            <div class="text-center mb-4">
+
+                <div class="small text-uppercase text-secondary fw-semibold mb-2">
+                    Examen finalizado
+                </div>
+
+                <h1 class="display-6 fw-bold">
+                    Resultado
+                </h1>
+
+                <p class="text-secondary mb-0">
+                    @(examen?.Titulo ?? "Examen")
+                </p>
+
+            </div>
+
+            <div class="card border-0 shadow-sm mb-4">
+
+                <div class="card-body p-4 p-md-5 text-center">
+
+                    <div class="small text-secondary mb-2">
+                        Calificación obtenida
+                    </div>
+
+                    <div class="display-3 fw-bold mb-2">
+                        @(Model.Calificacion?.ToString("0.##") ?? "0")
+                    </div>
+
+                    <div class="text-secondary">
+                        de @totalPuntos.ToString("0.##") puntos
+                    </div>
+
+                    <div class="progress mt-4"
+                         style="height: 10px;">
+
+                        <div class="progress-bar"
+                             style="width:@Math.Min(100, porcentaje)%;">
+                        </div>
+
+                    </div>
+
+                    <div class="mt-3 fw-semibold">
+                        @porcentaje.ToString("0.##")%
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="card border-0 shadow-sm mb-4">
+
+                <div class="card-body p-4">
+
+                    <div class="row g-4">
+
+                        <div class="col-md-4">
+
+                            <div class="small text-secondary">
+                                Materia
+                            </div>
+
+                            <div class="fw-semibold">
+                                @(examen?.Materia?.Nombre ?? "—")
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-4">
+
+                            <div class="small text-secondary">
+                                Inicio
+                            </div>
+
+                            <div class="fw-semibold">
+                                @Model.FechaInicio.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-4">
+
+                            <div class="small text-secondary">
+                                Finalización
+                            </div>
+
+                            <div class="fw-semibold">
+                                @(Model.FechaFin?.ToLocalTime().ToString("dd/MM/yyyy HH:mm") ?? "—")
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="d-grid">
+
+                <a asp-action="Index"
+                   class="btn btn-primary btn-lg">
+
+                    Volver a mis exámenes
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

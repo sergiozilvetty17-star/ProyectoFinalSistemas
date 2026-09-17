@@ -1,0 +1,442 @@
+﻿@model EcommerceApp.Models.IntentoExamen
+
+@{
+    ViewData["Title"] = "Resolver examen";
+
+    var examen = Model.Examen;
+    var preguntas = examen?.Preguntas
+        .OrderBy(p => p.Orden)
+        .ThenBy(p => p.Id)
+        .ToList()
+        ?? new List<EcommerceApp.Models.Pregunta>();
+
+    var duracionMinutos = examen?.DuracionMinutos ?? 60;
+    var totalPreguntas = preguntas.Count;
+}
+
+<div class="container-fluid py-4">
+
+    <div class="row justify-content-center">
+
+        <div class="col-12 col-xl-10">
+
+            <div class="d-flex flex-column flex-lg-row
+                        justify-content-between align-items-lg-center
+                        gap-3 mb-4">
+
+                <div>
+                    <div class="small text-uppercase text-secondary fw-semibold mb-1">
+                        Examen en curso
+                    </div>
+
+                    <h1 class="h3 fw-bold mb-1">
+                        @(examen?.Titulo ?? "Examen")
+                    </h1>
+
+                    <div class="text-secondary">
+                        @(examen?.Materia?.Nombre ?? "Materia")
+                    </div>
+                </div>
+
+                <div class="exam-timer-card">
+                    <div class="small text-secondary">
+                        Tiempo restante
+                    </div>
+
+                    <div id="examTimer"
+                         class="fw-bold fs-3">
+                        --:--
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="card border-0 shadow-sm mb-4">
+
+                <div class="card-body p-3 p-md-4">
+
+                    <div class="d-flex justify-content-between
+                                align-items-center mb-2">
+
+                        <span class="small text-secondary">
+                            Progreso
+                        </span>
+
+                        <span id="progressText"
+                              class="small fw-semibold">
+                            0 / @totalPreguntas
+                        </span>
+
+                    </div>
+
+                    <div class="progress"
+                         style="height: 8px;">
+
+                        <div id="progressBar"
+                             class="progress-bar"
+                             role="progressbar"
+                             style="width: 0%;">
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            @if (totalPreguntas == 0)
+            {
+                <div class="alert alert-warning border-0 shadow-sm">
+                    Este examen todavía no tiene preguntas.
+                </div>
+            }
+            else
+            {
+                <form id="examForm"
+                      method="post"
+                      asp-action="FinalizarExamen"
+                      asp-controller="Estudiante">
+
+                    @Html.AntiForgeryToken()
+
+                    <input type="hidden"
+                           name="IntentoId"
+                           value="@Model.Id" />
+
+                    @for (var i = 0; i < preguntas.Count; i++)
+                    {
+                        var pregunta = preguntas[i];
+
+                        <section class="question-card card border-0 shadow-sm mb-4"
+                                 data-question="@i"
+                                 style="display:@(i == 0 ? "block" : "none");">
+
+                            <div class="card-body p-4 p-md-5">
+
+                                <div class="d-flex justify-content-between
+                                            align-items-start gap-3 mb-4">
+
+                                    <div>
+
+                                        <div class="small text-uppercase
+                                                    text-secondary fw-semibold mb-2">
+
+                                            Pregunta @(i + 1)
+                                            de @totalPreguntas
+
+                                        </div>
+
+                                        <h2 class="h4 fw-bold mb-0">
+                                            @pregunta.Enunciado
+                                        </h2>
+
+                                    </div>
+
+                                    <div class="badge bg-secondary-subtle
+                                                text-secondary-emphasis px-3 py-2">
+
+                                        @pregunta.Puntaje pts.
+
+                                    </div>
+
+                                </div>
+
+                                @if (pregunta.Tipo == EcommerceApp.Models.TipoPregunta.RespuestaAbierta)
+                                {
+                                    <div class="mb-3">
+
+                                        <label class="form-label fw-semibold">
+                                            Tu respuesta
+                                        </label>
+
+                                        <textarea class="form-control"
+                                                  name="respuestas[@pregunta.Id].RespuestaTexto"
+                                                  rows="6"
+                                                  maxlength="4000"
+                                                  placeholder="Escribe tu respuesta..."></textarea>
+
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="d-grid gap-3">
+
+                                        @foreach (var opcion in pregunta.Opciones
+                                            .OrderBy(o => o.Orden)
+                                            .ThenBy(o => o.Id))
+                                        {
+                                            <label class="answer-option">
+
+                                                <input type="radio"
+                                                       name="respuestas[@pregunta.Id].OpcionId"
+                                                       value="@opcion.Id"
+                                                       class="answer-radio" />
+
+                                                <span class="answer-option-content">
+
+                                                    <span class="answer-option-marker">
+                                                    </span>
+
+                                                    <span>
+                                                        @opcion.Texto
+                                                    </span>
+
+                                                </span>
+
+                                            </label>
+                                        }
+
+                                    </div>
+                                }
+
+                            </div>
+
+                        </section>
+                    }
+
+                    <div class="card border-0 shadow-sm">
+
+                        <div class="card-body p-3 p-md-4">
+
+                            <div class="d-flex flex-column
+                                        flex-md-row
+                                        justify-content-between
+                                        gap-2">
+
+                                <button type="button"
+                                        id="btnAnterior"
+                                        class="btn btn-outline-secondary"
+                                        disabled>
+
+                                    Anterior
+
+                                </button>
+
+                                <button type="button"
+                                        id="btnSiguiente"
+                                        class="btn btn-primary">
+
+                                    Siguiente
+
+                                </button>
+
+                                <button type="submit"
+                                        id="btnFinalizar"
+                                        class="btn btn-success"
+                                        style="display:none;">
+
+                                    Finalizar examen
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </form>
+            }
+
+        </div>
+
+    </div>
+
+</div>
+
+<style>
+
+    .exam-timer-card {
+        min-width: 150px;
+        text-align: center;
+        padding: 12px 20px;
+        border-radius: 16px;
+        background: rgba(255,255,255,.04);
+        border: 1px solid rgba(255,255,255,.08);
+    }
+
+    .answer-option {
+        display: block;
+        cursor: pointer;
+        margin: 0;
+    }
+
+    .answer-radio {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .answer-option-content {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 18px;
+        border: 1px solid rgba(128,128,128,.25);
+        border-radius: 14px;
+        transition: all .2s ease;
+    }
+
+    .answer-option:hover .answer-option-content {
+        border-color: rgba(13,110,253,.55);
+        transform: translateY(-1px);
+    }
+
+    .answer-radio:checked + .answer-option-content {
+        border-color: rgba(13,110,253,.9);
+        background: rgba(13,110,253,.08);
+    }
+
+    .answer-option-marker {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        border: 2px solid currentColor;
+        flex-shrink: 0;
+    }
+
+    .answer-radio:checked
+    + .answer-option-content
+    .answer-option-marker {
+        box-shadow: inset 0 0 0 4px var(--bs-body-bg);
+        background: currentColor;
+    }
+
+</style>
+
+@section Scripts
+{
+    <script>
+
+        const totalPreguntas = @totalPreguntas;
+
+        let preguntaActual = 0;
+
+        const preguntas =
+            document.querySelectorAll(".question-card");
+
+        const btnAnterior =
+            document.getElementById("btnAnterior");
+
+        const btnSiguiente =
+            document.getElementById("btnSiguiente");
+
+        const btnFinalizar =
+            document.getElementById("btnFinalizar");
+
+        const progressBar =
+            document.getElementById("progressBar");
+
+        const progressText =
+            document.getElementById("progressText");
+
+        const timerElement =
+            document.getElementById("examTimer");
+
+        function mostrarPregunta(index) {
+
+            preguntas.forEach((pregunta, i) => {
+
+                pregunta.style.display =
+                    i === index ? "block" : "none";
+
+            });
+
+            preguntaActual = index;
+
+            actualizarProgreso();
+
+            btnAnterior.disabled =
+                preguntaActual === 0;
+
+            if (preguntaActual === totalPreguntas - 1) {
+
+                btnSiguiente.style.display = "none";
+
+                btnFinalizar.style.display = "block";
+
+            } else {
+
+                btnSiguiente.style.display = "block";
+
+                btnFinalizar.style.display = "none";
+
+            }
+
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+        }
+
+        function actualizarProgreso() {
+
+            const porcentaje =
+                ((preguntaActual + 1) / totalPreguntas) * 100;
+
+            progressBar.style.width =
+                porcentaje + "%";
+
+            progressText.textContent =
+                `${preguntaActual + 1} / ${totalPreguntas}`;
+        }
+
+        btnAnterior.addEventListener("click", function () {
+
+            if (preguntaActual > 0) {
+
+                mostrarPregunta(preguntaActual - 1);
+
+            }
+
+        });
+
+        btnSiguiente.addEventListener("click", function () {
+
+            if (preguntaActual < totalPreguntas - 1) {
+
+                mostrarPregunta(preguntaActual + 1);
+
+            }
+
+        });
+
+        let segundosRestantes =
+            @duracionMinutos * 60;
+
+        let examenFinalizadoAutomaticamente = false;
+
+        function actualizarTemporizador() {
+
+            const minutos =
+                Math.floor(segundosRestantes / 60);
+
+            const segundos =
+                segundosRestantes % 60;
+
+            timerElement.textContent =
+                `${String(minutos).padStart(2, "0")}:${String(segundos).padStart(2, "0")}`;
+
+            if (segundosRestantes <= 0) {
+
+                examenFinalizadoAutomaticamente = true;
+
+                document.getElementById("examForm").submit();
+
+                return;
+            }
+
+            segundosRestantes--;
+        }
+
+        mostrarPregunta(0);
+
+        actualizarTemporizador();
+
+        setInterval(
+            actualizarTemporizador,
+            1000
+        );
+
+    </script>
+}

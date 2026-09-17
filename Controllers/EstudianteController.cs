@@ -44,7 +44,10 @@ namespace EcommerceApp.Controllers
             }
 
             var materiaIds = estudiante.Inscripciones
-                .Where(i => i.Activa && i.Materia != null && i.Materia.Activa)
+                .Where(i =>
+                    i.Activa &&
+                    i.Materia != null &&
+                    i.Materia.Activa)
                 .Select(i => i.MateriaId)
                 .ToList();
 
@@ -80,7 +83,8 @@ namespace EcommerceApp.Controllers
             }
 
             var estudiante = await _context.Estudiantes
-                .FirstOrDefaultAsync(e => e.ApplicationUserId == userId);
+                .FirstOrDefaultAsync(e =>
+                    e.ApplicationUserId == userId);
 
             if (estudiante == null)
             {
@@ -89,7 +93,9 @@ namespace EcommerceApp.Controllers
 
             if (!estudiante.Activo)
             {
-                TempData["Error"] = "Tu cuenta de estudiante está inactiva.";
+                TempData["Error"] =
+                    "Tu cuenta de estudiante está inactiva.";
+
                 return RedirectToAction(nameof(Index));
             }
 
@@ -112,7 +118,9 @@ namespace EcommerceApp.Controllers
 
             if (!inscrito)
             {
-                TempData["Error"] = "No estás inscrito en la materia de este examen.";
+                TempData["Error"] =
+                    "No estás inscrito en la materia de este examen.";
+
                 return RedirectToAction(nameof(Index));
             }
 
@@ -120,25 +128,33 @@ namespace EcommerceApp.Controllers
 
             if (!examen.Activo)
             {
-                TempData["Error"] = "Este examen no está activo.";
+                TempData["Error"] =
+                    "Este examen no está activo.";
+
                 return RedirectToAction(nameof(Index));
             }
 
             if (examen.Estado != EstadoExamen.Publicado)
             {
-                TempData["Error"] = "Este examen todavía no está publicado.";
+                TempData["Error"] =
+                    "Este examen todavía no está publicado.";
+
                 return RedirectToAction(nameof(Index));
             }
 
             if (ahora < examen.FechaInicio)
             {
-                TempData["Error"] = "El examen todavía no está disponible.";
+                TempData["Error"] =
+                    "El examen todavía no está disponible.";
+
                 return RedirectToAction(nameof(Index));
             }
 
             if (ahora > examen.FechaFin)
             {
-                TempData["Error"] = "El período para realizar este examen ha terminado.";
+                TempData["Error"] =
+                    "El período para realizar este examen ha terminado.";
+
                 return RedirectToAction(nameof(Index));
             }
 
@@ -154,7 +170,9 @@ namespace EcommerceApp.Controllers
             {
                 if (intentoExistente.Finalizado)
                 {
-                    TempData["Error"] = "Ya has finalizado este examen.";
+                    TempData["Error"] =
+                        "Ya has finalizado este examen.";
+
                     return RedirectToAction(nameof(Index));
                 }
 
@@ -182,6 +200,19 @@ namespace EcommerceApp.Controllers
             };
 
             _context.IntentosExamen.Add(intento);
+
+            await _context.SaveChangesAsync();
+
+            _context.EventosSeguridad.Add(new EventoSeguridad
+            {
+                ApplicationUserId = userId,
+                IntentoExamenId = intento.Id,
+                Tipo = TipoEvento.InicioExamen,
+                Descripcion = $"Inicio del examen: {examen.Titulo}",
+                DireccionIP = HttpContext.Connection.RemoteIpAddress?.ToString(),
+                FechaHora = DateTime.UtcNow
+            });
+
             await _context.SaveChangesAsync();
 
             if (examen.RequiereVerificacionFacial)
@@ -233,7 +264,9 @@ namespace EcommerceApp.Controllers
 
             if (intento.Finalizado || intento.Anulado)
             {
-                TempData["Error"] = "Este intento ya no está disponible.";
+                TempData["Error"] =
+                    "Este intento ya no está disponible.";
+
                 return RedirectToAction(nameof(Index));
             }
 
@@ -276,7 +309,9 @@ namespace EcommerceApp.Controllers
 
             if (intento.Finalizado || intento.Anulado)
             {
-                TempData["Error"] = "Este intento ya no está disponible.";
+                TempData["Error"] =
+                    "Este intento ya no está disponible.";
+
                 return RedirectToAction(nameof(Index));
             }
 
@@ -297,11 +332,241 @@ namespace EcommerceApp.Controllers
 
             if (ahora > intento.Examen.FechaFin)
             {
-                TempData["Error"] = "El período del examen ha terminado.";
+                TempData["Error"] =
+                    "El período del examen ha terminado.";
+
                 return RedirectToAction(nameof(Index));
+            }
+
+            return View(intento);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> FinalizarExamen(
+            FinalizarExamenViewModel model)
+        {
+            var userId = _userManager.GetUserId(User);
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Challenge();
+            }
+
+            var intento = await _context.IntentosExamen
+                .Include(i => i.Examen)
+                    .ThenInclude(e => e!.Preguntas)
+                        .ThenInclude(p => p.Opciones)
+                .Include(i => i.Estudiante)
+                .FirstOrDefaultAsync(i => i.Id == model.IntentoId);
+
+            if (intento == null)
+            {
+                return NotFound("El intento no existe.");
+            }
+
+            if (intento.Estudiante == null ||
+                intento.Estudiante.ApplicationUserId != userId)
+            {
+                return Forbid();
+            }
+
+            if (intento.Finalizado || intento.Anulado)
+            {
+                TempData["Error"] =
+                    "Este examen ya no puede ser enviado.";
+
+                return RedirectToAction(nameof(Index));
+            }
+
+            if (intento.Examen == null)
+            {
+                return NotFound("No se encontró el examen.");
+            }
+
+            if (intento.Examen.RequiereVerificacionFacial &&
+                !intento.IdentidadVerificada)
+            {
+                TempData["Error"] =
+                    "La identidad todavía no ha sido verificada.";
+
+                return RedirectToAction(
+                    nameof(VerificarIdentidad),
+                    new { id = intento.Id });
+            }
+
+            var ahora = DateTime.UtcNow;
+
+            var examenVencido =
+                ahora > intento.Examen.FechaFin;
+
+            var tiempoInternoAgotado =
+                ahora >
+                intento.FechaInicio.AddMinutes(
+                    intento.Examen.DuracionMinutos);
+
+            var preguntas =
+                intento.Examen.Preguntas
+                    .OrderBy(p => p.Orden)
+                    .ThenBy(p => p.Id)
+                    .ToList();
+
+            var respuestasExistentes =
+                await _context.Respuestas
+                    .Where(r =>
+                        r.IntentoExamenId == intento.Id)
+                    .ToListAsync();
+
+            if (respuestasExistentes.Count > 0)
+            {
+                _context.Respuestas.RemoveRange(
+                    respuestasExistentes);
+            }
+
+            decimal calificacion = 0;
+
+            foreach (var pregunta in preguntas)
+            {
+                model.Respuestas.TryGetValue(
+                    pregunta.Id,
+                    out var respuestaModel);
+
+                int? opcionId =
+                    respuestaModel?.OpcionId;
+
+                string? respuestaTexto =
+                    respuestaModel?.RespuestaTexto?.Trim();
+
+                bool correcta = false;
+
+                decimal puntajeObtenido = 0;
+
+                Opcion? opcionSeleccionada = null;
+
+                if (opcionId.HasValue)
+                {
+                    opcionSeleccionada =
+                        pregunta.Opciones
+                            .FirstOrDefault(o =>
+                                o.Id == opcionId.Value);
+
+                    if (opcionSeleccionada != null)
+                    {
+                        correcta =
+                            opcionSeleccionada.EsCorrecta;
+
+                        if (correcta)
+                        {
+                            puntajeObtenido =
+                                pregunta.Puntaje;
+                        }
+                    }
+                }
+
+                if (pregunta.Tipo ==
+                    TipoPregunta.RespuestaAbierta)
+                {
+                    correcta = false;
+                    puntajeObtenido = 0;
+                }
+
+                calificacion += puntajeObtenido;
+
+                var respuesta = new Respuesta
+                {
+                    IntentoExamenId = intento.Id,
+                    PreguntaId = pregunta.Id,
+                    OpcionId =
+                        opcionSeleccionada?.Id,
+                    RespuestaTexto =
+                        string.IsNullOrWhiteSpace(respuestaTexto)
+                            ? null
+                            : respuestaTexto,
+                    PuntajeObtenido =
+                        puntajeObtenido,
+                    Correcta = correcta
+                };
+
+                _context.Respuestas.Add(respuesta);
+            }
+
+            intento.Calificacion = calificacion;
+            intento.FechaFin = ahora;
+            intento.Finalizado = true;
+
+            var descripcionFinalizacion =
+                examenVencido || tiempoInternoAgotado
+                    ? "Examen finalizado por vencimiento del tiempo."
+                    : "Examen finalizado por el estudiante.";
+
+            _context.EventosSeguridad.Add(new EventoSeguridad
+            {
+                ApplicationUserId = userId,
+                IntentoExamenId = intento.Id,
+                Tipo = TipoEvento.FinalizacionExamen,
+                Descripcion = descripcionFinalizacion,
+                DireccionIP = HttpContext.Connection.RemoteIpAddress?.ToString(),
+                FechaHora = DateTime.UtcNow
+            });
+
+            if (examenVencido || tiempoInternoAgotado)
+            {
+                TempData["Info"] =
+                    "El examen fue enviado al finalizar el tiempo disponible.";
+            }
+            else
+            {
+                TempData["Success"] =
+                    "El examen fue enviado correctamente.";
+            }
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(
+                nameof(Resultado),
+                new { id = intento.Id });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Resultado(int id)
+        {
+            var userId = _userManager.GetUserId(User);
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Challenge();
+            }
+
+            var intento = await _context.IntentosExamen
+                .Include(i => i.Examen)
+                    .ThenInclude(e => e!.Materia)
+                .Include(i => i.Estudiante)
+                    .ThenInclude(e => e!.Usuario)
+                .Include(i => i.Respuestas)
+                    .ThenInclude(r => r.Pregunta)
+                .FirstOrDefaultAsync(i => i.Id == id);
+
+            if (intento == null)
+            {
+                return NotFound("El intento no existe.");
+            }
+
+            if (intento.Estudiante == null ||
+                intento.Estudiante.ApplicationUserId != userId)
+            {
+                return Forbid();
+            }
+
+            if (!intento.Finalizado)
+            {
+                return RedirectToAction(
+                    nameof(ResolverExamen),
+                    new { id = intento.Id });
             }
 
             return View(intento);
         }
     }
 }
+
+
