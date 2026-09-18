@@ -331,9 +331,7 @@
 
                         <td>
                             <span class="table-date">
-                                @usuario.CreatedAt
-                                    .ToLocalTime()
-                                    .ToString("dd/MM/yyyy HH:mm")
+                                @(usuario.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm"))
                             </span>
                         </td>
 
@@ -483,3 +481,4 @@
     </section>
 
 </div>
+
