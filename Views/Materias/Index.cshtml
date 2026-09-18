@@ -2,159 +2,407 @@
 
 @{
     ViewData["Title"] = "Materias";
-    var docentes = ViewBag.Docentes;
+    var materias = Model.ToList();
+    var activas = materias.Count(m => m.Activa);
+    var inactivas = materias.Count - activas;
 }
 
-<div class="container py-5">
+<div class="page-shell">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <section class="page-hero">
+
         <div>
-            <span class="badge bg-dark mb-2">EXAMSECURE</span>
-            <h1 class="fw-bold mb-1">Materias</h1>
-            <p class="text-muted mb-0">
-                Administración de materias académicas.
+
+            <div class="eyebrow">
+                <span class="eyebrow-dot"></span>
+                ADMINISTRACIÓN · ACADÉMICO
+            </div>
+
+            <h1>
+                Gestión de materias
+            </h1>
+
+            <p>
+                Administra las materias académicas, docentes responsables
+                y disponibilidad dentro de ExamSecure.
             </p>
+
         </div>
 
-        <a asp-action="Create" class="btn btn-dark">
-            + Nueva materia
-        </a>
-    </div>
+        <div class="hero-actions">
+
+            <a asp-controller="Home"
+               asp-action="Index"
+               class="btn btn-outline-secondary">
+
+                <svg class="button-icon"
+                     viewBox="0 0 24 24"
+                     aria-hidden="true">
+                    <path d="M3 11.5 12 4l9 7.5" />
+                    <path d="M5 10v10h14V10" />
+                    <path d="M9 20v-6h6v6" />
+                </svg>
+
+                Panel
+
+            </a>
+
+            <a asp-action="Create"
+               class="btn btn-primary">
+
+                <svg class="button-icon"
+                     viewBox="0 0 24 24"
+                     aria-hidden="true">
+                    <path d="M12 5v14" />
+                    <path d="M5 12h14" />
+                </svg>
+
+                Nueva materia
+
+            </a>
+
+        </div>
+
+    </section>
+
 
     @if (TempData["Success"] != null)
     {
-        <div class="alert alert-success">
-            @TempData["Success"]
+        <div class="exam-toast success-toast mb-4">
+            <span class="toast-icon">✓</span>
+            <span>@TempData["Success"]</span>
         </div>
     }
 
     @if (TempData["Error"] != null)
     {
-        <div class="alert alert-danger">
-            @TempData["Error"]
+        <div class="exam-toast error-toast mb-4">
+            <span class="toast-icon">!</span>
+            <span>@TempData["Error"]</span>
         </div>
     }
 
-    <div class="card shadow-sm border-0">
-        <div class="card-body p-0">
 
-            @if (!Model.Any())
-            {
-                <div class="p-5 text-center">
-                    <h4>No hay materias registradas</h4>
-                    <p class="text-muted">
-                        Crea la primera materia para comenzar.
-                    </p>
+    <section class="admin-summary-grid mb-4">
 
-                    <a asp-action="Create"
-                       class="btn btn-dark">
-                        Crear materia
-                    </a>
-                </div>
-            }
-            else
-            {
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
+        <div class="admin-summary-card">
 
-                        <thead class="table-dark">
-                            <tr>
-                                <th>Código</th>
-                                <th>Materia</th>
-                                <th>Docente</th>
-                                <th>Estado</th>
-                                <th class="text-end">Acciones</th>
-                            </tr>
-                        </thead>
+            <div class="admin-summary-icon primary">
 
-                        <tbody>
-                            @foreach (var materia in Model)
-                            {
-                                <tr>
-                                    <td>
-                                        <span class="fw-bold">
-                                            @materia.Codigo
-                                        </span>
-                                    </td>
+                <svg viewBox="0 0 24 24"
+                     aria-hidden="true">
+                    <path d="M4 5h16v14H4z" />
+                    <path d="M8 9h8" />
+                    <path d="M8 13h5" />
+                </svg>
 
-                                    <td>
-                                        <div class="fw-semibold">
-                                            @materia.Nombre
-                                        </div>
+            </div>
 
-                                        @if (!string.IsNullOrWhiteSpace(
-                                            materia.Descripcion))
-                                        {
-                                            <small class="text-muted">
-                                                @materia.Descripcion
-                                            </small>
-                                        }
-                                    </td>
-
-                                    <td>
-                                        @if (materia.Docente?.Usuario != null)
-                                        {
-                                            @materia.Docente.Usuario.NombreCompleto
-                                        }
-                                        else
-                                        {
-                                            <span class="text-muted">
-                                                Sin asignar
-                                            </span>
-                                        }
-                                    </td>
-
-                                    <td>
-                                        @if (materia.Activa)
-                                        {
-                                            <span class="badge bg-success">
-                                                Activa
-                                            </span>
-                                        }
-                                        else
-                                        {
-                                            <span class="badge bg-secondary">
-                                                Inactiva
-                                            </span>
-                                        }
-                                    </td>
-
-                                    <td class="text-end">
-
-                                        <a asp-action="Edit"
-                                           asp-route-id="@materia.Id"
-                                           class="btn btn-sm btn-outline-dark">
-                                            Editar
-                                        </a>
-
-                                        <form asp-action="ToggleEstado"
-                                              asp-route-id="@materia.Id"
-                                              method="post"
-                                              class="d-inline">
-
-                                            @Html.AntiForgeryToken()
-
-                                            <button type="submit"
-                                                    class="btn btn-sm @(materia.Activa
-                                                        ? "btn-outline-danger"
-                                                        : "btn-outline-success")">
-                                                @(materia.Activa
-                                                    ? "Desactivar"
-                                                    : "Activar")
-                                            </button>
-
-                                        </form>
-
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-
-                    </table>
-                </div>
-            }
+            <div>
+                <span>Total materias</span>
+                <strong>@materias.Count</strong>
+            </div>
 
         </div>
-    </div>
+
+
+        <div class="admin-summary-card">
+
+            <div class="admin-summary-icon success">
+
+                <svg viewBox="0 0 24 24"
+                     aria-hidden="true">
+                    <path d="m5 12 4 4L19 6" />
+                </svg>
+
+            </div>
+
+            <div>
+                <span>Materias activas</span>
+                <strong>@activas</strong>
+            </div>
+
+        </div>
+
+
+        <div class="admin-summary-card">
+
+            <div class="admin-summary-icon cyan">
+
+                <svg viewBox="0 0 24 24"
+                     aria-hidden="true">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                </svg>
+
+            </div>
+
+            <div>
+                <span>Sin actividad</span>
+                <strong>@inactivas</strong>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="data-panel">
+
+        <div class="data-panel-header">
+
+            <div>
+
+                <span class="section-kicker">
+                    CATÁLOGO ACADÉMICO
+                </span>
+
+                <h2>
+                    Materias registradas
+                </h2>
+
+                <p>
+                    Consulta docentes responsables y estado de cada materia.
+                </p>
+
+            </div>
+
+            <span class="record-count">
+                @materias.Count registros
+            </span>
+
+        </div>
+
+
+        @if (!materias.Any())
+        {
+            <div class="empty-state">
+
+                <div class="empty-state-icon">
+
+                    <svg viewBox="0 0 24 24"
+                         aria-hidden="true">
+                        <path d="M4 5h16v14H4z" />
+                        <path d="M8 9h8" />
+                        <path d="M8 13h5" />
+                    </svg>
+
+                </div>
+
+                <h3>
+                    No hay materias registradas
+                </h3>
+
+                <p>
+                    Crea la primera materia para comenzar a configurar
+                    el entorno académico.
+                </p>
+
+                <a asp-action="Create"
+                   class="btn btn-primary">
+
+                    <svg class="button-icon"
+                         viewBox="0 0 24 24"
+                         aria-hidden="true">
+                        <path d="M12 5v14" />
+                        <path d="M5 12h14" />
+                    </svg>
+
+                    Crear materia
+
+                </a>
+
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+
+                <table class="table examsecure-table align-middle mb-0">
+
+                    <thead>
+
+                        <tr>
+                            <th class="ps-4">Código</th>
+                            <th>Materia</th>
+                            <th>Docente responsable</th>
+                            <th>Estado</th>
+                            <th class="text-end pe-4">Acciones</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                    @foreach (var materia in materias)
+                    {
+                        <tr>
+
+                            <td class="ps-4">
+
+                                <span class="subject-code">
+                                    @materia.Codigo
+                                </span>
+
+                            </td>
+
+
+                            <td>
+
+                                <div class="table-subject">
+
+                                    <strong>
+                                        @materia.Nombre
+                                    </strong>
+
+                                    @if (!string.IsNullOrWhiteSpace(materia.Descripcion))
+                                    {
+                                        <small>
+                                            @materia.Descripcion
+                                        </small>
+                                    }
+
+                                </div>
+
+                            </td>
+
+
+                            <td>
+
+                                @if (materia.Docente?.Usuario != null)
+                                {
+                                    <div class="table-user">
+
+                                        <div class="table-user-avatar">
+                                            @{
+                                                var nombreDocente =
+                                                    materia.Docente.Usuario.NombreCompleto;
+
+                                                var inicialDocente =
+                                                    !string.IsNullOrWhiteSpace(nombreDocente)
+                                                        ? nombreDocente.Substring(0, 1).ToUpper()
+                                                        : "D";
+                                            }
+
+                                            @inicialDocente
+                                        </div>
+
+                                        <div>
+                                            <strong>
+                                                @materia.Docente.Usuario.NombreCompleto
+                                            </strong>
+
+                                            <small>
+                                                Docente asignado
+                                            </small>
+                                        </div>
+
+                                    </div>
+                                }
+                                else
+                                {
+                                    <span class="status-badge status-neutral">
+                                        Sin asignar
+                                    </span>
+                                }
+
+                            </td>
+
+
+                            <td>
+
+                                @if (materia.Activa)
+                                {
+                                    <span class="status-badge status-success">
+                                        <span class="status-badge-dot"></span>
+                                        Activa
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="status-badge status-neutral">
+                                        <span class="status-badge-dot"></span>
+                                        Inactiva
+                                    </span>
+                                }
+
+                            </td>
+
+
+                            <td class="text-end pe-4">
+
+                                <div class="action-group justify-content-end">
+
+                                    <a asp-action="Edit"
+                                       asp-route-id="@materia.Id"
+                                       class="table-action">
+
+                                        <svg viewBox="0 0 24 24"
+                                             aria-hidden="true">
+                                            <path d="M12 20h9" />
+                                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+                                        </svg>
+
+                                        Editar
+
+                                    </a>
+
+
+                                    <form asp-action="ToggleEstado"
+                                          asp-route-id="@materia.Id"
+                                          method="post"
+                                          class="inline-form">
+
+                                        @Html.AntiForgeryToken()
+
+                                        @if (materia.Activa)
+                                        {
+                                            <button type="submit"
+                                                    class="table-action table-action-danger">
+
+                                                <svg viewBox="0 0 24 24"
+                                                     aria-hidden="true">
+                                                    <path d="M18 6 6 18" />
+                                                    <path d="m6 6 12 12" />
+                                                </svg>
+
+                                                Desactivar
+
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button type="submit"
+                                                    class="table-action table-action-success">
+
+                                                <svg viewBox="0 0 24 24"
+                                                     aria-hidden="true">
+                                                    <path d="m5 12 4 4L19 6" />
+                                                </svg>
+
+                                                Activar
+
+                                            </button>
+                                        }
+
+                                    </form>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+                    }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+
+    </section>
 
 </div>

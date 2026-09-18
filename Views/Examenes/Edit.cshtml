@@ -5,195 +5,479 @@
     var materias = ViewBag.Materias as List<EcommerceApp.Models.Materia>;
 }
 
-<div class="container py-5">
+<div class="page-shell">
 
-    <div class="mb-4">
-        <span class="badge bg-dark mb-2">EXAMSECURE</span>
+    <section class="page-hero">
 
-        <h1 class="fw-bold">
-            Editar examen
-        </h1>
+        <div>
 
-        <p class="text-muted">
-            Modifica la configuración de la evaluación.
-        </p>
-    </div>
+            <div class="eyebrow">
+                <span class="eyebrow-dot"></span>
+                EVALUACIONES
+            </div>
 
-    <div class="card shadow-sm border-0">
+            <h1>
+                Editar examen
+            </h1>
 
-        <div class="card-body p-4">
+            <p>
+                Modifica la configuración de la evaluación
+                manteniendo su información académica.
+            </p>
 
-            <form asp-action="Edit" method="post">
+        </div>
 
-                @Html.AntiForgeryToken()
+        <div class="hero-actions">
 
-                <input type="hidden"
-                       asp-for="Id" />
+            <a asp-action="Index"
+               class="btn btn-outline-secondary">
 
-                <div asp-validation-summary="ModelOnly"
-                     class="text-danger mb-3"></div>
+                <svg class="button-icon"
+                     viewBox="0 0 24 24"
+                     aria-hidden="true">
+                    <path d="M19 12H5" />
+                    <path d="m12 19-7-7 7-7" />
+                </svg>
 
-                <div class="row g-4">
+                Volver a exámenes
 
-                    <div class="col-12">
+            </a>
 
-                        <label asp-for="Titulo"
-                               class="form-label">
-                            Título del examen
-                        </label>
+        </div>
 
-                        <input asp-for="Titulo"
-                               class="form-control form-control-lg" />
+    </section>
 
-                        <span asp-validation-for="Titulo"
-                              class="text-danger"></span>
+
+    <div class="form-layout-admin">
+
+        <main class="form-panel">
+
+            <div class="form-panel-header">
+
+                <div class="form-panel-icon primary">
+
+                    <svg viewBox="0 0 24 24"
+                         aria-hidden="true">
+                        <path d="M12 20h9" />
+                        <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4Z" />
+                    </svg>
+
+                </div>
+
+                <div>
+
+                    <span class="section-kicker">
+                        CONFIGURACIÓN
+                    </span>
+
+                    <h2>
+                        Editar configuración
+                    </h2>
+
+                    <p>
+                        Actualiza los parámetros de esta evaluación.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-panel-body">
+
+                <form asp-action="Edit"
+                      method="post">
+
+                    @Html.AntiForgeryToken()
+
+                    <input type="hidden"
+                           asp-for="Id" />
+
+
+                    <div asp-validation-summary="ModelOnly"
+                         class="validation-summary">
+                    </div>
+
+
+                    <div class="form-section">
+
+                        <div class="form-section-heading">
+
+                            <span class="form-section-number">
+                                01
+                            </span>
+
+                            <div>
+                                <h3>Identificación</h3>
+                                <p>
+                                    Información principal del examen.
+                                </p>
+                            </div>
+
+                        </div>
+
+
+                        <div class="exam-form-grid">
+
+                            <div class="form-field-full">
+
+                                <label asp-for="Titulo"
+                                       class="form-label">
+                                    Título del examen
+                                </label>
+
+                                <input asp-for="Titulo"
+                                       class="form-control" />
+
+                                <span asp-validation-for="Titulo"
+                                      class="field-validation">
+                                </span>
+
+                            </div>
+
+
+                            <div>
+
+                                <label asp-for="MateriaId"
+                                       class="form-label">
+                                    Materia
+                                </label>
+
+                                <select asp-for="MateriaId"
+                                        class="form-select">
+
+                                    @if (materias != null)
+                                    {
+                                        foreach (var materia in materias)
+                                        {
+                                            <option value="@materia.Id">
+                                                @materia.Codigo - @materia.Nombre
+                                            </option>
+                                        }
+                                    }
+
+                                </select>
+
+                                <span asp-validation-for="MateriaId"
+                                      class="field-validation">
+                                </span>
+
+                            </div>
+
+
+                            <div>
+
+                                <label asp-for="DuracionMinutos"
+                                       class="form-label">
+                                    Duración
+                                </label>
+
+                                <div class="input-with-suffix">
+
+                                    <input asp-for="DuracionMinutos"
+                                           class="form-control"
+                                           type="number"
+                                           min="1"
+                                           max="600" />
+
+                                    <span>
+                                        min.
+                                    </span>
+
+                                </div>
+
+                                <span asp-validation-for="DuracionMinutos"
+                                      class="field-validation">
+                                </span>
+
+                            </div>
+
+                        </div>
 
                     </div>
 
-                    <div class="col-md-8">
 
-                        <label asp-for="MateriaId"
-                               class="form-label">
-                            Materia
-                        </label>
+                    <div class="form-section">
 
-                        <select asp-for="MateriaId"
-                                class="form-select">
+                        <div class="form-section-heading">
 
-                            @if (materias != null)
-                            {
-                                foreach (var materia in materias)
-                                {
-                                    <option value="@materia.Id">
-                                        @materia.Codigo - @materia.Nombre
-                                    </option>
-                                }
-                            }
+                            <span class="form-section-number">
+                                02
+                            </span>
 
-                        </select>
+                            <div>
+                                <h3>Descripción</h3>
+                                <p>
+                                    Instrucciones mostradas para la evaluación.
+                                </p>
+                            </div>
 
-                        <span asp-validation-for="MateriaId"
-                              class="text-danger"></span>
+                        </div>
 
-                    </div>
 
-                    <div class="col-md-4">
+                        <div>
 
-                        <label asp-for="DuracionMinutos"
-                               class="form-label">
-                            Duración
-                        </label>
+                            <label asp-for="Descripcion"
+                                   class="form-label">
+                                Descripción
+                            </label>
 
-                        <div class="input-group">
+                            <textarea asp-for="Descripcion"
+                                      class="form-control"
+                                      rows="5"></textarea>
 
-                            <input asp-for="DuracionMinutos"
-                                   class="form-control"
-                                   type="number"
-                                   min="1"
-                                   max="600" />
-
-                            <span class="input-group-text">
-                                minutos
+                            <span asp-validation-for="Descripcion"
+                                  class="field-validation">
                             </span>
 
                         </div>
 
                     </div>
 
-                    <div class="col-12">
 
-                        <label asp-for="Descripcion"
-                               class="form-label">
-                            Descripción
-                        </label>
+                    <div class="form-section">
 
-                        <textarea asp-for="Descripcion"
-                                  class="form-control"
-                                  rows="4"></textarea>
+                        <div class="form-section-heading">
+
+                            <span class="form-section-number">
+                                03
+                            </span>
+
+                            <div>
+                                <h3>Programación</h3>
+                                <p>
+                                    Define el periodo en que estará disponible.
+                                </p>
+                            </div>
+
+                        </div>
+
+
+                        <div class="exam-form-grid">
+
+                            <div>
+
+                                <label asp-for="FechaInicio"
+                                       class="form-label">
+                                    Fecha y hora de inicio
+                                </label>
+
+                                <input asp-for="FechaInicio"
+                                       type="datetime-local"
+                                       class="form-control" />
+
+                                <span asp-validation-for="FechaInicio"
+                                      class="field-validation">
+                                </span>
+
+                            </div>
+
+
+                            <div>
+
+                                <label asp-for="FechaFin"
+                                       class="form-label">
+                                    Fecha y hora de finalización
+                                </label>
+
+                                <input asp-for="FechaFin"
+                                       type="datetime-local"
+                                       class="form-control" />
+
+                                <span asp-validation-for="FechaFin"
+                                      class="field-validation">
+                                </span>
+
+                            </div>
+
+                        </div>
 
                     </div>
 
-                    <div class="col-md-6">
 
-                        <label asp-for="FechaInicio"
-                               class="form-label">
-                            Inicio
-                        </label>
+                    <div class="form-section">
 
-                        <input asp-for="FechaInicio"
-                               type="datetime-local"
-                               class="form-control" />
+                        <div class="form-section-heading">
 
-                    </div>
+                            <span class="form-section-number">
+                                04
+                            </span>
 
-                    <div class="col-md-6">
+                            <div>
+                                <h3>Seguridad y estado</h3>
+                                <p>
+                                    Controla la verificación facial y disponibilidad.
+                                </p>
+                            </div>
 
-                        <label asp-for="FechaFin"
-                               class="form-label">
-                            Finalización
-                        </label>
+                        </div>
 
-                        <input asp-for="FechaFin"
-                               type="datetime-local"
-                               class="form-control" />
 
-                    </div>
+                        <div class="exam-settings-grid">
 
-                    <div class="col-md-6">
 
-                        <div class="form-check form-switch mt-4">
+                            <label class="exam-toggle-card">
 
-                            <input asp-for="RequiereVerificacionFacial"
-                                   class="form-check-input" />
+                                <span class="exam-toggle-content">
 
-                            <label asp-for="RequiereVerificacionFacial"
-                                   class="form-check-label">
-                                Verificación facial
+                                    <span class="exam-toggle-icon">
+
+                                        <svg viewBox="0 0 24 24"
+                                             aria-hidden="true">
+                                            <path d="M12 3 5 6v5c0 4.5 3 8.2 7 10 4-1.8 7-5.5 7-10V6z" />
+                                            <circle cx="12" cy="10" r="2" />
+                                            <path d="M8.5 16a4.5 4.5 0 0 1 7 0" />
+                                        </svg>
+
+                                    </span>
+
+                                    <span>
+                                        <strong>
+                                            Verificación facial
+                                        </strong>
+
+                                        <small>
+                                            Solicitar identidad facial antes
+                                            de iniciar el examen.
+                                        </small>
+                                    </span>
+
+                                </span>
+
+                                <input asp-for="RequiereVerificacionFacial"
+                                       class="exam-toggle-input" />
+
+                                <span class="exam-toggle-slider"></span>
+
+                            </label>
+
+
+                            <label class="exam-toggle-card">
+
+                                <span class="exam-toggle-content">
+
+                                    <span class="exam-toggle-icon">
+
+                                        <svg viewBox="0 0 24 24"
+                                             aria-hidden="true">
+                                            <path d="M12 3v18" />
+                                            <path d="M5 7h11a3 3 0 0 1 0 6H8a3 3 0 0 0 0 6h11" />
+                                        </svg>
+
+                                    </span>
+
+                                    <span>
+                                        <strong>
+                                            Examen activo
+                                        </strong>
+
+                                        <small>
+                                            Mantener disponible la evaluación
+                                            dentro del sistema.
+                                        </small>
+                                    </span>
+
+                                </span>
+
+                                <input asp-for="Activo"
+                                       class="exam-toggle-input" />
+
+                                <span class="exam-toggle-slider"></span>
+
                             </label>
 
                         </div>
 
                     </div>
 
-                    <div class="col-md-6">
 
-                        <div class="form-check form-switch mt-4">
+                    <div class="form-actions-admin">
 
-                            <input asp-for="Activo"
-                                   class="form-check-input" />
+                        <a asp-action="Index"
+                           class="btn btn-outline-secondary">
+                            Cancelar
+                        </a>
 
-                            <label asp-for="Activo"
-                                   class="form-check-label">
-                                Examen activo
-                            </label>
+                        <button type="submit"
+                                class="btn btn-primary">
 
-                        </div>
+                            <svg class="button-icon"
+                                 viewBox="0 0 24 24"
+                                 aria-hidden="true">
+                                <path d="M5 4h14v16H5z" />
+                                <path d="M8 8h8" />
+                                <path d="M8 12h8" />
+                            </svg>
+
+                            Guardar cambios
+
+                        </button>
 
                     </div>
 
+                </form>
+
+            </div>
+
+        </main>
+
+
+        <aside class="form-side-panel">
+
+            <div class="form-side-icon">
+
+                <svg viewBox="0 0 24 24"
+                     aria-hidden="true">
+                    <path d="M12 20h9" />
+                    <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4Z" />
+                </svg>
+
+            </div>
+
+            <span class="section-kicker">
+                CONFIGURACIÓN
+            </span>
+
+            <h3>
+                Antes de publicar
+            </h3>
+
+            <p>
+                Revisa cuidadosamente la programación y las opciones
+                de seguridad antes de poner el examen a disposición
+                de los estudiantes.
+            </p>
+
+            <div class="side-info-list">
+
+                <div>
+                    <span class="side-info-dot"></span>
+                    <span>Materia correcta</span>
                 </div>
 
-                <div class="mt-4 d-flex gap-2">
-
-                    <button type="submit"
-                            class="btn btn-dark">
-                        Guardar cambios
-                    </button>
-
-                    <a asp-action="Index"
-                       class="btn btn-outline-secondary">
-                        Cancelar
-                    </a>
-
+                <div>
+                    <span class="side-info-dot"></span>
+                    <span>Fechas válidas</span>
                 </div>
 
-            </form>
+                <div>
+                    <span class="side-info-dot"></span>
+                    <span>Duración definida</span>
+                </div>
 
-        </div>
+                <div>
+                    <span class="side-info-dot"></span>
+                    <span>Seguridad configurada</span>
+                </div>
+
+            </div>
+
+        </aside>
 
     </div>
 
 </div>
+
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

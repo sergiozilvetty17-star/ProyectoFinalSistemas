@@ -9,137 +9,259 @@
 
     <div class="page-hero">
         <div>
-            <span class="eyebrow">CONSTRUCTOR DE EXAMEN</span>
+            <span class="eyebrow">
+                <span class="eyebrow-dot"></span>
+                CONSTRUCTOR DE EXAMEN
+            </span>
 
             <h1>Editar pregunta</h1>
 
             <p>
                 @(examen?.Titulo ?? "Examen")
+                <span class="hero-separator">/</span>
+                @(examen?.Materia?.Nombre ?? "Materia")
             </p>
         </div>
 
         <a asp-action="Index"
            asp-route-examenId="@Model.ExamenId"
            class="btn btn-secondary">
-            ← Volver
+
+            <span class="button-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M19 12H5M11 18l-6-6 6-6" />
+                </svg>
+            </span>
+
+            Volver a preguntas
         </a>
     </div>
 
-    <div class="glass-card">
+    <div class="form-layout question-form-layout">
 
-        <div class="section-header">
-            <div>
-                <h2>Modificar pregunta</h2>
-                <p>
-                    Actualiza el contenido y la puntuación.
-                </p>
+        <div class="form-panel">
+
+            <div class="form-panel-header">
+
+                <div class="form-panel-icon primary">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="m14 6 4 4M5 19l1.2-4.2L15.8 5.2a1.7 1.7 0 0 1 2.4 0l.6.6a1.7 1.7 0 0 1 0 2.4l-9.6 9.6L5 19Z" />
+                    </svg>
+                </div>
+
+                <div>
+                    <span class="section-kicker">EDITAR PREGUNTA</span>
+                    <h2>Modificar contenido</h2>
+                    <p>
+                        Actualiza el enunciado, tipo, puntuación y orden.
+                    </p>
+                </div>
+
             </div>
+
+            <form asp-action="Edit"
+                  method="post"
+                  class="examsecure-form">
+
+                @Html.AntiForgeryToken()
+
+                <input type="hidden"
+                       name="id"
+                       value="@Context.Request.RouteValues["id"]" />
+
+                <input asp-for="ExamenId"
+                       type="hidden" />
+
+                <div asp-validation-summary="ModelOnly"
+                     class="validation-summary"></div>
+
+                <div class="form-section">
+
+                    <div class="form-section-heading">
+                        <span class="form-section-number">01</span>
+
+                        <div>
+                            <strong>Contenido</strong>
+                            <span>Modifica el enunciado de la pregunta.</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+
+                        <label asp-for="Enunciado" class="form-label">
+                            Enunciado
+                        </label>
+
+                        <textarea asp-for="Enunciado"
+                                  class="form-control question-textarea"
+                                  rows="7"></textarea>
+
+                        <span asp-validation-for="Enunciado"
+                              class="field-validation">
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <div class="form-section">
+
+                    <div class="form-section-heading">
+                        <span class="form-section-number">02</span>
+
+                        <div>
+                            <strong>Configuración</strong>
+                            <span>Actualiza las características de la pregunta.</span>
+                        </div>
+                    </div>
+
+                    <div class="form-layout form-layout-small">
+
+                        <div class="form-group">
+
+                            <label asp-for="Tipo" class="form-label">
+                                Tipo de pregunta
+                            </label>
+
+                            <select asp-for="Tipo"
+                                    asp-items="Html.GetEnumSelectList<EcommerceApp.Models.TipoPregunta>()"
+                                    class="form-select">
+                            </select>
+
+                            <span asp-validation-for="Tipo"
+                                  class="field-validation">
+                            </span>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label asp-for="Puntaje" class="form-label">
+                                Puntaje
+                            </label>
+
+                            <div class="input-with-suffix">
+                                <input asp-for="Puntaje"
+                                       type="number"
+                                       step="0.01"
+                                       min="0.01"
+                                       class="form-control" />
+
+                                <span>pts</span>
+                            </div>
+
+                            <span asp-validation-for="Puntaje"
+                                  class="field-validation">
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label asp-for="Orden" class="form-label">
+                            Orden de la pregunta
+                        </label>
+
+                        <input asp-for="Orden"
+                               type="number"
+                               min="1"
+                               class="form-control" />
+
+                        <span class="form-help">
+                            Define la posición de esta pregunta dentro del examen.
+                        </span>
+
+                        <span asp-validation-for="Orden"
+                              class="field-validation">
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <div class="form-actions-admin">
+
+                    <a asp-action="Index"
+                       asp-route-examenId="@Model.ExamenId"
+                       class="btn btn-secondary">
+                        Cancelar
+                    </a>
+
+                    <button type="submit"
+                            class="btn btn-primary">
+
+                        <span class="button-icon">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M5 12h14M13 6l6 6-6 6" />
+                            </svg>
+                        </span>
+
+                        Guardar cambios
+                    </button>
+
+                </div>
+
+            </form>
+
         </div>
 
-        <form asp-action="Edit"
-              method="post"
-              class="examsecure-form">
+        <aside class="form-side-panel">
 
-            @Html.AntiForgeryToken()
-
-            <input type="hidden"
-                   name="id"
-                   value="@Context.Request.RouteValues["id"]" />
-
-            <input asp-for="ExamenId"
-                   type="hidden" />
-
-            <div asp-validation-summary="ModelOnly"
-                 class="validation-summary"></div>
-
-            <div class="form-group">
-
-                <label asp-for="Enunciado">
-                    Enunciado
-                </label>
-
-                <textarea asp-for="Enunciado"
-                          class="form-control"
-                          rows="6"></textarea>
-
-                <span asp-validation-for="Enunciado"
-                      class="text-danger">
-                </span>
-
+            <div class="form-side-icon success">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="m5 12 4 4L19 6" />
+                </svg>
             </div>
 
-            <div class="form-layout form-layout-small">
+            <span class="section-kicker">CONFIGURACIÓN</span>
 
-                <div class="form-group">
+            <h3>La pregunta forma parte del examen</h3>
 
-                    <label asp-for="Tipo">
-                        Tipo de pregunta
-                    </label>
+            <p>
+                Los cambios realizados aquí se aplicarán
+                directamente a la evaluación.
+            </p>
 
-                    <select asp-for="Tipo"
-                            asp-items="Html.GetEnumSelectList<EcommerceApp.Models.TipoPregunta>()"
-                            class="form-control">
-                    </select>
+            <div class="side-info-list">
 
-                    <span asp-validation-for="Tipo"
-                          class="text-danger">
-                    </span>
+                <div class="question-type-info">
+                    <span class="side-info-number">01</span>
 
+                    <div>
+                        <strong>Enunciado</strong>
+                        <p>
+                            Texto que verá el estudiante.
+                        </p>
+                    </div>
                 </div>
 
-                <div class="form-group">
+                <div class="question-type-info">
+                    <span class="side-info-number">02</span>
 
-                    <label asp-for="Puntaje">
-                        Puntaje
-                    </label>
+                    <div>
+                        <strong>Puntaje</strong>
+                        <p>
+                            Valor que tendrá la pregunta.
+                        </p>
+                    </div>
+                </div>
 
-                    <input asp-for="Puntaje"
-                           type="number"
-                           step="0.01"
-                           min="0.01"
-                           class="form-control" />
+                <div class="question-type-info">
+                    <span class="side-info-number">03</span>
 
-                    <span asp-validation-for="Puntaje"
-                          class="text-danger">
-                    </span>
-
+                    <div>
+                        <strong>Orden</strong>
+                        <p>
+                            Posición dentro de la evaluación.
+                        </p>
+                    </div>
                 </div>
 
             </div>
 
-            <div class="form-group">
-
-                <label asp-for="Orden">
-                    Orden
-                </label>
-
-                <input asp-for="Orden"
-                       type="number"
-                       min="1"
-                       class="form-control" />
-
-                <span asp-validation-for="Orden"
-                      class="text-danger">
-                </span>
-
-            </div>
-
-            <div class="form-actions">
-
-                <a asp-action="Index"
-                   asp-route-examenId="@Model.ExamenId"
-                   class="btn btn-secondary">
-                    Cancelar
-                </a>
-
-                <button type="submit"
-                        class="btn btn-primary">
-                    Guardar cambios
-                </button>
-
-            </div>
-
-        </form>
+        </aside>
 
     </div>
 

@@ -2,38 +2,49 @@
 
 @{
     ViewData["Title"] = "Mis exámenes";
+
+    var examenes = Model.ToList();
+    var borradores = examenes.Count(e => e.Estado == EcommerceApp.Models.EstadoExamen.Borrador);
+    var publicados = examenes.Count(e => e.Estado == EcommerceApp.Models.EstadoExamen.Publicado);
+    var cerrados = examenes.Count(e => e.Estado == EcommerceApp.Models.EstadoExamen.Cerrado);
 }
 
-<div class="examsecure-container">
+<div class="page-shell">
 
-    <section class="examsecure-hero reveal">
+    <section class="page-hero">
 
-        <div class="d-flex justify-content-between align-items-end flex-wrap gap-4">
+        <div>
 
-            <div>
-
-                <div class="examsecure-eyebrow">
-                    <span class="examsecure-status-dot"></span>
-                    EVALUACIONES
-                </div>
-
-                <h1 class="examsecure-title">
-                    Mis
-                    <span class="examsecure-gradient-text">
-                        exámenes.
-                    </span>
-                </h1>
-
-                <p class="examsecure-subtitle">
-                    Diseña, configura y publica evaluaciones
-                    para tus estudiantes.
-                </p>
-
+            <div class="eyebrow">
+                <span class="eyebrow-dot"></span>
+                EVALUACIONES
             </div>
 
+            <h1>
+                Mis exámenes
+            </h1>
+
+            <p>
+                Diseña, configura y publica evaluaciones
+                para tus estudiantes.
+            </p>
+
+        </div>
+
+        <div class="hero-actions">
+
             <a asp-action="Create"
-               class="examsecure-btn examsecure-btn-primary">
-                + Nuevo examen
+               class="btn btn-primary">
+
+                <svg class="button-icon"
+                     viewBox="0 0 24 24"
+                     aria-hidden="true">
+                    <path d="M12 5v14" />
+                    <path d="M5 12h14" />
+                </svg>
+
+                Nuevo examen
+
             </a>
 
         </div>
@@ -41,193 +52,446 @@
     </section>
 
 
-    @if (!Model.Any())
+    @if (TempData["Success"] != null)
     {
-        <div class="examsecure-card p-5 text-center reveal">
-
-            <div class="examsecure-card-icon mx-auto">
-                ◆
-            </div>
-
-            <h3 class="fw-bold text-white">
-                Aún no tienes exámenes
-            </h3>
-
-            <p class="text-secondary mb-4">
-                Crea tu primera evaluación y comienza a construir
-                tu banco de preguntas.
-            </p>
-
-            <a asp-action="Create"
-               class="examsecure-btn examsecure-btn-primary">
-                Crear mi primer examen
-            </a>
-
+        <div class="exam-toast success-toast mb-4">
+            <span class="toast-icon">✓</span>
+            <span>@TempData["Success"]</span>
         </div>
     }
-    else
-    {
-        <div class="examsecure-card overflow-hidden reveal">
 
+    @if (TempData["Error"] != null)
+    {
+        <div class="exam-toast error-toast mb-4">
+            <span class="toast-icon">!</span>
+            <span>@TempData["Error"]</span>
+        </div>
+    }
+
+
+    <section class="admin-summary-grid mb-4">
+
+        <div class="admin-summary-card">
+
+            <div class="admin-summary-icon primary">
+
+                <svg viewBox="0 0 24 24"
+                     aria-hidden="true">
+                    <path d="M5 4h14v16H5z" />
+                    <path d="M8 8h8" />
+                    <path d="M8 12h8" />
+                    <path d="M8 16h5" />
+                </svg>
+
+            </div>
+
+            <div>
+                <span>Total de exámenes</span>
+                <strong>@examenes.Count</strong>
+            </div>
+
+        </div>
+
+
+        <div class="admin-summary-card">
+
+            <div class="admin-summary-icon warning">
+
+                <svg viewBox="0 0 24 24"
+                     aria-hidden="true">
+                    <path d="M12 3v18" />
+                    <path d="M5 7h11a3 3 0 0 1 0 6H8a3 3 0 0 0 0 6h11" />
+                </svg>
+
+            </div>
+
+            <div>
+                <span>Borradores</span>
+                <strong>@borradores</strong>
+            </div>
+
+        </div>
+
+
+        <div class="admin-summary-card">
+
+            <div class="admin-summary-icon success">
+
+                <svg viewBox="0 0 24 24"
+                     aria-hidden="true">
+                    <path d="m5 12 4 4L19 6" />
+                </svg>
+
+            </div>
+
+            <div>
+                <span>Publicados</span>
+                <strong>@publicados</strong>
+            </div>
+
+        </div>
+
+
+        <div class="admin-summary-card">
+
+            <div class="admin-summary-icon cyan">
+
+                <svg viewBox="0 0 24 24"
+                     aria-hidden="true">
+                    <circle cx="12" cy="12" r="8" />
+                    <path d="M9 12h6" />
+                </svg>
+
+            </div>
+
+            <div>
+                <span>Cerrados</span>
+                <strong>@cerrados</strong>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="data-panel">
+
+        <div class="data-panel-header">
+
+            <div>
+
+                <span class="section-kicker">
+                    BANCO DE EVALUACIONES
+                </span>
+
+                <h2>
+                    Exámenes registrados
+                </h2>
+
+                <p>
+                    Administra preguntas, fechas, duración y publicación
+                    de cada evaluación.
+                </p>
+
+            </div>
+
+            <span class="record-count">
+                @examenes.Count registros
+            </span>
+
+        </div>
+
+
+        @if (!examenes.Any())
+        {
+            <div class="empty-state">
+
+                <div class="empty-state-icon">
+
+                    <svg viewBox="0 0 24 24"
+                         aria-hidden="true">
+                        <path d="M5 4h14v16H5z" />
+                        <path d="M8 8h8" />
+                        <path d="M8 12h8" />
+                        <path d="M8 16h5" />
+                    </svg>
+
+                </div>
+
+                <h3>
+                    Aún no tienes exámenes
+                </h3>
+
+                <p>
+                    Crea tu primera evaluación y comienza a construir
+                    tu banco de preguntas.
+                </p>
+
+                <a asp-action="Create"
+                   class="btn btn-primary">
+
+                    <svg class="button-icon"
+                         viewBox="0 0 24 24"
+                         aria-hidden="true">
+                        <path d="M12 5v14" />
+                        <path d="M5 12h14" />
+                    </svg>
+
+                    Crear primer examen
+
+                </a>
+
+            </div>
+        }
+        else
+        {
             <div class="table-responsive">
 
-                <table class="table examsecure-table align-middle mb-0">
+                <table class="table examsecure-table exam-table mb-0">
 
                     <thead>
                         <tr>
-                            <th>Evaluación</th>
+                            <th class="ps-4">Evaluación</th>
                             <th>Materia</th>
-                            <th>Inicio</th>
-                            <th>Finaliza</th>
+                            <th>Programación</th>
                             <th>Duración</th>
                             <th>Estado</th>
-                            <th class="text-end">Acciones</th>
+                            <th class="text-end pe-4">Acciones</th>
                         </tr>
                     </thead>
 
                     <tbody>
 
-                        @foreach (var examen in Model)
-                        {
-                            <tr>
+                    @foreach (var examen in examenes)
+                    {
+                        <tr>
 
-                                <td>
+                            <td class="ps-4">
 
-                                    <div class="fw-bold text-white">
-                                        @examen.Titulo
+                                <div class="exam-title-cell">
+
+                                    <div class="exam-title-icon">
+
+                                        <svg viewBox="0 0 24 24"
+                                             aria-hidden="true">
+                                            <path d="M5 4h14v16H5z" />
+                                            <path d="M8 8h8" />
+                                            <path d="M8 12h8" />
+                                            <path d="M8 16h5" />
+                                        </svg>
+
                                     </div>
 
-                                    <small class="text-secondary">
-                                        @(examen.Preguntas?.Count ?? 0) preguntas
-                                    </small>
+                                    <div>
 
-                                </td>
+                                        <strong>
+                                            @examen.Titulo
+                                        </strong>
 
-                                <td>
-                                    <span class="text-light">
-                                        @examen.Materia?.Nombre
-                                    </span>
-                                </td>
+                                        <small>
+                                            @(examen.Preguntas?.Count ?? 0)
+                                            preguntas
+                                        </small>
 
-                                <td>
-                                    @examen.FechaInicio.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
-                                </td>
+                                    </div>
 
-                                <td>
-                                    @examen.FechaFin.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
-                                </td>
+                                </div>
 
-                                <td>
-                                    @examen.DuracionMinutos min.
-                                </td>
+                            </td>
 
-                                <td>
 
-                                    @switch (examen.Estado)
+                            <td>
+
+                                <div class="exam-subject-cell">
+
+                                    <strong>
+                                        @(examen.Materia?.Nombre ?? "Sin materia")
+                                    </strong>
+
+                                    @if (!string.IsNullOrWhiteSpace(examen.Materia?.Codigo))
                                     {
-                                        case EcommerceApp.Models.EstadoExamen.Borrador:
-
-                                            <span class="examsecure-badge examsecure-badge-warning">
-                                                ● Borrador
-                                            </span>
-
-                                            break;
-
-                                        case EcommerceApp.Models.EstadoExamen.Publicado:
-
-                                            <span class="examsecure-badge examsecure-badge-success">
-                                                ● Publicado
-                                            </span>
-
-                                            break;
-
-                                        case EcommerceApp.Models.EstadoExamen.Cerrado:
-
-                                            <span class="examsecure-badge examsecure-badge-neutral">
-                                                ● Cerrado
-                                            </span>
-
-                                            break;
+                                        <small>
+                                            @examen.Materia.Codigo
+                                        </small>
                                     }
 
-                                </td>
+                                </div>
 
-                                <td class="text-end">
+                            </td>
 
-                                    <div class="d-flex justify-content-end gap-2">
 
-                                        <a asp-controller="Preguntas"
-   asp-action="Index"
-   asp-route-examenId="@examen.Id"
-   class="btn btn-sm btn-primary">
-    Preguntas
-</a>
+                            <td>
 
-<a asp-controller="Preguntas"
-   asp-action="Index"
-   asp-route-examenId="@examen.Id"
-   class="btn btn-sm btn-primary">
-    Preguntas
-</a>
+                                <div class="exam-schedule">
 
-<a asp-action="Edit"
-                                           asp-route-id="@examen.Id"
-                                           class="examsecure-btn examsecure-btn-secondary btn-sm">
-                                            Editar
-                                        </a>
-
-                                        @if (examen.Estado ==
-                                            EcommerceApp.Models.EstadoExamen.Borrador)
-                                        {
-                                            <form asp-action="Publicar"
-                                                  asp-route-id="@examen.Id"
-                                                  method="post"
-                                                  data-loading>
-
-                                                @Html.AntiForgeryToken()
-
-                                                <button type="submit"
-                                                        class="examsecure-btn examsecure-btn-primary btn-sm">
-                                                    Publicar
-                                                </button>
-
-                                            </form>
-                                        }
-
-                                        @if (examen.Estado ==
-                                            EcommerceApp.Models.EstadoExamen.Publicado)
-                                        {
-                                            <form asp-action="Cerrar"
-                                                  asp-route-id="@examen.Id"
-                                                  method="post"
-                                                  data-loading>
-
-                                                @Html.AntiForgeryToken()
-
-                                                <button type="submit"
-                                                        class="examsecure-btn examsecure-btn-danger btn-sm">
-                                                    Cerrar
-                                                </button>
-
-                                            </form>
-                                        }
-
+                                    <div>
+                                        <span>Inicio</span>
+                                        <strong>
+                                            @examen.FechaInicio
+                                                .ToLocalTime()
+                                                .ToString("dd/MM/yyyy HH:mm")
+                                        </strong>
                                     </div>
 
-                                </td>
+                                    <div>
+                                        <span>Finaliza</span>
+                                        <strong>
+                                            @examen.FechaFin
+                                                .ToLocalTime()
+                                                .ToString("dd/MM/yyyy HH:mm")
+                                        </strong>
+                                    </div>
 
-                            </tr>
-                        }
+                                </div>
+
+                            </td>
+
+
+                            <td>
+
+                                <span class="duration-badge">
+
+                                    <svg viewBox="0 0 24 24"
+                                         aria-hidden="true">
+                                        <circle cx="12" cy="12" r="8" />
+                                        <path d="M12 8v5l3 2" />
+                                    </svg>
+
+                                    @examen.DuracionMinutos min.
+
+                                </span>
+
+                            </td>
+
+
+                            <td>
+
+                                @switch (examen.Estado)
+                                {
+                                    case EcommerceApp.Models.EstadoExamen.Borrador:
+
+                                        <span class="status-badge status-warning">
+                                            <span class="status-badge-dot"></span>
+                                            Borrador
+                                        </span>
+
+                                        break;
+
+                                    case EcommerceApp.Models.EstadoExamen.Publicado:
+
+                                        <span class="status-badge status-success">
+                                            <span class="status-badge-dot"></span>
+                                            Publicado
+                                        </span>
+
+                                        break;
+
+                                    case EcommerceApp.Models.EstadoExamen.Cerrado:
+
+                                        <span class="status-badge status-neutral">
+                                            <span class="status-badge-dot"></span>
+                                            Cerrado
+                                        </span>
+
+                                        break;
+                                }
+
+                                @if (!examen.Activo)
+                                {
+                                    <span class="status-badge status-danger exam-inactive-badge">
+                                        <span class="status-badge-dot"></span>
+                                        Inactivo
+                                    </span>
+                                }
+
+                            </td>
+
+
+                            <td class="text-end pe-4">
+
+                                <div class="action-group justify-content-end">
+
+                                    <a asp-controller="Preguntas"
+                                       asp-action="Index"
+                                       asp-route-examenId="@examen.Id"
+                                       class="table-action table-action-primary">
+
+                                        <svg viewBox="0 0 24 24"
+                                             aria-hidden="true">
+                                            <path d="M5 4h14v16H5z" />
+                                            <path d="M8 8h8" />
+                                            <path d="M8 12h6" />
+                                            <path d="M8 16h4" />
+                                        </svg>
+
+                                        Preguntas
+
+                                    </a>
+
+
+                                    <a asp-action="Edit"
+                                       asp-route-id="@examen.Id"
+                                       class="table-action">
+
+                                        <svg viewBox="0 0 24 24"
+                                             aria-hidden="true">
+                                            <path d="M12 20h9" />
+                                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4Z" />
+                                        </svg>
+
+                                        Editar
+
+                                    </a>
+
+
+                                    @if (examen.Estado ==
+                                        EcommerceApp.Models.EstadoExamen.Borrador)
+                                    {
+                                        <form asp-action="Publicar"
+                                              asp-route-id="@examen.Id"
+                                              method="post"
+                                              data-loading
+                                              class="inline-form">
+
+                                            @Html.AntiForgeryToken()
+
+                                            <button type="submit"
+                                                    class="table-action table-action-success">
+
+                                                <svg viewBox="0 0 24 24"
+                                                     aria-hidden="true">
+                                                    <path d="m5 12 4 4L19 6" />
+                                                </svg>
+
+                                                Publicar
+
+                                            </button>
+
+                                        </form>
+                                    }
+
+
+                                    @if (examen.Estado ==
+                                        EcommerceApp.Models.EstadoExamen.Publicado)
+                                    {
+                                        <form asp-action="Cerrar"
+                                              asp-route-id="@examen.Id"
+                                              method="post"
+                                              data-loading
+                                              class="inline-form">
+
+                                            @Html.AntiForgeryToken()
+
+                                            <button type="submit"
+                                                    class="table-action table-action-danger">
+
+                                                <svg viewBox="0 0 24 24"
+                                                     aria-hidden="true">
+                                                    <path d="M18 6 6 18" />
+                                                    <path d="m6 6 12 12" />
+                                                </svg>
+
+                                                Cerrar
+
+                                            </button>
+
+                                        </form>
+                                    }
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+                    }
 
                     </tbody>
 
                 </table>
 
             </div>
+        }
 
-        </div>
-    }
+    </section>
 
 </div>
-
-

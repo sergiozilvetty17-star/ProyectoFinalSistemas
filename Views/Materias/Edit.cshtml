@@ -2,138 +2,353 @@
 
 @{
     ViewData["Title"] = "Editar materia";
-    var docentes = ViewBag.Docentes as List<EcommerceApp.Models.Docente>;
+    var docentes = ViewBag.Docentes as List<EcommerceApp.Models.Docente>
+        ?? new List<EcommerceApp.Models.Docente>();
 }
 
-<div class="container py-5">
+<div class="page-shell">
 
-    <div class="mb-4">
-        <span class="badge bg-dark mb-2">EXAMSECURE</span>
-        <h1 class="fw-bold">Editar materia</h1>
-        <p class="text-muted">
-            Modifica la información académica de la materia.
-        </p>
-    </div>
+    <section class="page-hero">
 
-    <div class="card shadow-sm border-0">
-        <div class="card-body p-4">
+        <div>
 
-            <form asp-action="Edit" method="post">
+            <div class="eyebrow">
+                <span class="eyebrow-dot"></span>
+                ADMINISTRACIÓN · ACADÉMICO
+            </div>
 
-                @Html.AntiForgeryToken()
+            <h1>
+                Editar materia
+            </h1>
 
-                <input type="hidden"
-                       asp-for="Id" />
+            <p>
+                Actualiza la información académica y asignación
+                de la materia seleccionada.
+            </p>
 
-                <div asp-validation-summary="ModelOnly"
-                     class="text-danger mb-3"></div>
+        </div>
 
-                <div class="row g-3">
+        <div class="hero-actions">
 
-                    <div class="col-md-4">
-                        <label asp-for="Codigo"
-                               class="form-label">
-                            Código
-                        </label>
+            <a asp-action="Index"
+               class="btn btn-outline-secondary">
 
-                        <input asp-for="Codigo"
-                               class="form-control" />
+                <svg class="button-icon"
+                     viewBox="0 0 24 24"
+                     aria-hidden="true">
+                    <path d="M19 12H5" />
+                    <path d="m12 19-7-7 7-7" />
+                </svg>
 
-                        <span asp-validation-for="Codigo"
-                              class="text-danger"></span>
+                Volver a materias
+
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <div class="form-layout-admin">
+
+        <main class="form-panel">
+
+            <div class="form-panel-header">
+
+                <div class="form-panel-icon primary">
+
+                    <svg viewBox="0 0 24 24"
+                         aria-hidden="true">
+                        <path d="M12 20h9" />
+                        <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+                    </svg>
+
+                </div>
+
+                <div>
+
+                    <span class="section-kicker">
+                        CATÁLOGO ACADÉMICO
+                    </span>
+
+                    <h2>
+                        Información de la materia
+                    </h2>
+
+                    <p>
+                        Modifica los datos de la materia y guarda los cambios.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-panel-body">
+
+                <form asp-action="Edit"
+                      method="post">
+
+                    @Html.AntiForgeryToken()
+
+                    <input type="hidden"
+                           asp-for="Id" />
+
+                    <div asp-validation-summary="ModelOnly"
+                         class="validation-summary">
                     </div>
 
-                    <div class="col-md-8">
-                        <label asp-for="Nombre"
-                               class="form-label">
-                            Nombre de la materia
-                        </label>
 
-                        <input asp-for="Nombre"
-                               class="form-control" />
+                    <div class="form-section">
 
-                        <span asp-validation-for="Nombre"
-                              class="text-danger"></span>
+                        <div class="form-section-heading">
+
+                            <span class="form-section-number">
+                                01
+                            </span>
+
+                            <div>
+                                <h3>Identificación</h3>
+                                <p>Información principal de la materia.</p>
+                            </div>
+
+                        </div>
+
+
+                        <div class="row g-3">
+
+                            <div class="col-md-4">
+
+                                <label asp-for="Codigo"
+                                       class="form-label">
+                                    Código
+                                </label>
+
+                                <input asp-for="Codigo"
+                                       class="form-control" />
+
+                                <span asp-validation-for="Codigo"
+                                      class="field-validation">
+                                </span>
+
+                            </div>
+
+
+                            <div class="col-md-8">
+
+                                <label asp-for="Nombre"
+                                       class="form-label">
+                                    Nombre de la materia
+                                </label>
+
+                                <input asp-for="Nombre"
+                                       class="form-control" />
+
+                                <span asp-validation-for="Nombre"
+                                      class="field-validation">
+                                </span>
+
+                            </div>
+
+
+                            <div class="col-12">
+
+                                <label asp-for="Descripcion"
+                                       class="form-label">
+                                    Descripción
+                                </label>
+
+                                <textarea asp-for="Descripcion"
+                                          class="form-control"
+                                          rows="4"></textarea>
+
+                                <span asp-validation-for="Descripcion"
+                                      class="field-validation">
+                                </span>
+
+                            </div>
+
+                        </div>
+
                     </div>
 
-                    <div class="col-12">
-                        <label asp-for="Descripcion"
-                               class="form-label">
-                            Descripción
-                        </label>
 
-                        <textarea asp-for="Descripcion"
-                                  class="form-control"
-                                  rows="4"></textarea>
+                    <div class="form-section">
 
-                        <span asp-validation-for="Descripcion"
-                              class="text-danger"></span>
-                    </div>
+                        <div class="form-section-heading">
 
-                    <div class="col-md-8">
-                        <label asp-for="DocenteId"
-                               class="form-label">
-                            Docente responsable
-                        </label>
+                            <span class="form-section-number">
+                                02
+                            </span>
 
-                        <select asp-for="DocenteId"
-                                class="form-select">
+                            <div>
+                                <h3>Asignación académica</h3>
+                                <p>Gestiona el docente responsable.</p>
+                            </div>
 
-                            <option value="">
-                                -- Sin docente asignado --
-                            </option>
+                        </div>
 
-                            @if (docentes != null)
-                            {
-                                foreach (var docente in docentes)
+
+                        <div>
+
+                            <label asp-for="DocenteId"
+                                   class="form-label">
+                                Docente responsable
+                            </label>
+
+                            <select asp-for="DocenteId"
+                                    class="form-select">
+
+                                <option value="">
+                                    Sin docente asignado
+                                </option>
+
+                                @foreach (var docente in docentes)
                                 {
                                     <option value="@docente.Id">
                                         @docente.Usuario?.NombreCompleto
                                     </option>
                                 }
-                            }
 
-                        </select>
-                    </div>
+                            </select>
 
-                    <div class="col-md-4">
-                        <label class="form-label">
-                            Estado
-                        </label>
+                            <span asp-validation-for="DocenteId"
+                                  class="field-validation">
+                            </span>
 
-                        <div class="form-check form-switch mt-2">
-                            <input asp-for="Activa"
-                                   class="form-check-input" />
-
-                            <label asp-for="Activa"
-                                   class="form-check-label">
-                                Materia activa
-                            </label>
                         </div>
+
                     </div>
 
+
+                    <div class="form-section">
+
+                        <div class="form-section-heading">
+
+                            <span class="form-section-number">
+                                03
+                            </span>
+
+                            <div>
+                                <h3>Estado</h3>
+                                <p>Controla la disponibilidad de la materia.</p>
+                            </div>
+
+                        </div>
+
+
+                        <div class="account-status-control">
+
+                            <div>
+
+                                <strong>
+                                    Materia activa
+                                </strong>
+
+                                <span>
+                                    Las materias activas permanecen disponibles
+                                    para la gestión académica.
+                                </span>
+
+                            </div>
+
+                            <div class="form-check form-switch">
+
+                                <input asp-for="Activa"
+                                       class="form-check-input"
+                                       type="checkbox" />
+
+                                <label asp-for="Activa"
+                                       class="form-check-label">
+                                </label>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-actions-admin">
+
+                        <a asp-action="Index"
+                           class="btn btn-outline-secondary">
+                            Cancelar
+                        </a>
+
+                        <button type="submit"
+                                class="btn btn-primary">
+
+                            <svg class="button-icon"
+                                 viewBox="0 0 24 24"
+                                 aria-hidden="true">
+                                <path d="m5 12 4 4L19 6" />
+                            </svg>
+
+                            Guardar cambios
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </main>
+
+
+        <aside class="form-side-panel">
+
+            <div class="form-side-icon">
+
+                <svg viewBox="0 0 24 24"
+                     aria-hidden="true">
+                    <path d="M4 5h16v14H4z" />
+                    <path d="M8 9h8" />
+                    <path d="M8 13h5" />
+                </svg>
+
+            </div>
+
+            <span class="section-kicker">
+                ACADÉMICO
+            </span>
+
+            <h3>
+                Configuración académica
+            </h3>
+
+            <p>
+                Los cambios se aplicarán a la materia existente
+                sin modificar su identificador interno.
+            </p>
+
+            <div class="side-info-list">
+
+                <div>
+                    <span class="side-info-dot"></span>
+                    <span>Código conservado</span>
                 </div>
 
-                <div class="mt-4 d-flex gap-2">
-
-                    <button type="submit"
-                            class="btn btn-dark">
-                        Guardar cambios
-                    </button>
-
-                    <a asp-action="Index"
-                       class="btn btn-outline-secondary">
-                        Cancelar
-                    </a>
-
+                <div>
+                    <span class="side-info-dot"></span>
+                    <span>Docente configurable</span>
                 </div>
 
-            </form>
+                <div>
+                    <span class="side-info-dot"></span>
+                    <span>Estado controlable</span>
+                </div>
 
-        </div>
+            </div>
+
+        </aside>
+
     </div>
 
 </div>
+
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

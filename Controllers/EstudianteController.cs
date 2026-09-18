@@ -338,6 +338,19 @@ namespace EcommerceApp.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+
+            var limiteTiempo =
+                intento.FechaInicio.AddMinutes(
+                    intento.Examen.DuracionMinutos);
+
+            if (ahora > limiteTiempo)
+            {
+                TempData["Error"] =
+                    "El tiempo asignado para este examen ha terminado.";
+
+                return RedirectToAction(nameof(Index));
+            }
+
             return View(intento);
         }
 
@@ -566,7 +579,240 @@ namespace EcommerceApp.Controllers
 
             return View(intento);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> VerificarRostro(
+            int id,
+            string descriptor)
+        {
+            var userId = _userManager.GetUserId(User);
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized(new
+                {
+                    success = false,
+                    message = "Sesión no válida."
+                });
+            }
+
+            if (string.IsNullOrWhiteSpace(descriptor))
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "No se recibió el descriptor facial."
+                });
+            }
+
+            var intento = await _context.IntentosExamen
+                .Include(i => i.Examen)
+                .Include(i => i.Estudiante)
+                .FirstOrDefaultAsync(i => i.Id == id);
+
+            if (intento == null)
+            {
+                return NotFound(new
+                {
+                    success = false,
+                    message = "El intento de examen no existe."
+                });
+            }
+
+            if (intento.Estudiante == null ||
+                intento.Estudiante.ApplicationUserId != userId)
+            {
+                return Forbid();
+            }
+
+            if (intento.Finalizado || intento.Anulado)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Este intento ya no está disponible."
+                });
+            }
+
+            if (intento.Examen == null)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "No se pudo cargar el examen asociado."
+                });
+            }
+
+            var ahora = DateTime.UtcNow;
+
+            if (ahora < intento.Examen.FechaInicio)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "El examen todavía no está disponible."
+                });
+            }
+
+            if (ahora > intento.Examen.FechaFin)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "El período para realizar este examen ha terminado."
+                });
+            }
+
+            float[] descriptorActual;
+
+            try
+            {
+                descriptorActual = descriptor
+                    .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(valor => float.Parse(
+                        valor,
+                        System.Globalization.CultureInfo.InvariantCulture))
+                    .ToArray();
+            }
+            catch
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "El descriptor facial tiene un formato inválido."
+                });
+            }
+
+            if (descriptorActual.Length != 128)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = $"El descriptor debe contener 128 valores. Se recibieron {descriptorActual.Length}."
+                });
+            }
+
+            var registroFacial = await _context.RegistrosFaciales
+                .FirstOrDefaultAsync(r =>
+                    r.EstudianteId == intento.EstudianteId &&
+                    r.Activo);
+
+            if (registroFacial == null ||
+                registroFacial.FaceEmbedding == null ||
+                registroFacial.FaceEmbedding.Length != 128 * sizeof(float))
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "El estudiante no tiene un registro facial válido."
+                });
+            }
+
+            var descriptorRegistrado =
+                new float[registroFacial.FaceEmbedding.Length / sizeof(float)];
+
+            Buffer.BlockCopy(
+                registroFacial.FaceEmbedding,
+                0,
+                descriptorRegistrado,
+                0,
+                registroFacial.FaceEmbedding.Length);
+
+            double distancia = 0;
+
+            for (int i = 0; i < descriptorActual.Length; i++)
+            {
+                double diferencia =
+                    descriptorActual[i] - descriptorRegistrado[i];
+
+                distancia += diferencia * diferencia;
+            }
+
+            distancia = Math.Sqrt(distancia);
+
+            const double umbral = 0.60;
+
+            if (distancia > umbral)
+            {
+                _context.EventosSeguridad.Add(new EventoSeguridad
+                {
+                    ApplicationUserId = userId,
+                    IntentoExamenId = intento.Id,
+                    Tipo = TipoEvento.RostroNoCoincide,
+                    Descripcion =
+                        $"La verificación facial no coincidió. Distancia: {distancia:F4}",
+                    DireccionIP =
+                        HttpContext.Connection.RemoteIpAddress?.ToString(),
+                    FechaHora = DateTime.UtcNow
+                });
+
+                await _context.SaveChangesAsync();
+
+                return Ok(new
+                {
+                    success = false,
+                    verified = false,
+                    message = "El rostro no coincide con el registro facial.",
+                    distance = Math.Round(distancia, 4)
+                });
+            }
+
+            intento.IdentidadVerificada = true;
+
+            // El tiempo del examen comienza únicamente
+            // después de verificar correctamente la identidad.
+            intento.FechaInicio = DateTime.UtcNow;
+
+            _context.EventosSeguridad.Add(new EventoSeguridad
+            {
+                ApplicationUserId = userId,
+                IntentoExamenId = intento.Id,
+                Tipo = TipoEvento.AutenticacionFacial,
+                Descripcion =
+                    $"Identidad facial verificada correctamente. Distancia: {distancia:F4}",
+                DireccionIP =
+                    HttpContext.Connection.RemoteIpAddress?.ToString(),
+                FechaHora = DateTime.UtcNow
+            });
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                success = true,
+                verified = true,
+                message = "Identidad verificada correctamente.",
+                distance = Math.Round(distancia, 4)
+            });
+        }
+
+        private static double CalcularDistanciaEuclidiana(
+            float[] descriptor1,
+            float[] descriptor2)
+        {
+            if (descriptor1.Length != descriptor2.Length)
+            {
+                return double.MaxValue;
+            }
+
+            double suma = 0;
+
+            for (int i = 0; i < descriptor1.Length; i++)
+            {
+                double diferencia =
+                    descriptor1[i] - descriptor2[i];
+
+                suma += diferencia * diferencia;
+            }
+
+            return Math.Sqrt(suma);
+        }
     }
 }
+
+
+
+
 
 

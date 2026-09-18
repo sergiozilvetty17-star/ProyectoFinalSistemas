@@ -6,144 +6,322 @@
 
 <div class="page-shell">
 
-    <div class="page-hero">
-        <div>
-            <span class="eyebrow">GESTIÓN ACADÉMICA</span>
+    <section class="page-hero">
 
-            <h1>Nueva inscripción</h1>
+        <div>
+
+            <div class="eyebrow">
+                <span class="eyebrow-dot"></span>
+                GESTIÓN ACADÉMICA
+            </div>
+
+            <h1>
+                Nueva inscripción
+            </h1>
 
             <p>
                 Vincula un estudiante con una materia para habilitar
                 posteriormente sus evaluaciones.
             </p>
+
         </div>
 
-        <a asp-action="Index" class="btn btn-secondary">
-            ← Volver
-        </a>
-    </div>
+        <div class="hero-actions">
 
-    <div class="form-layout">
+            <a asp-action="Index"
+               class="btn btn-outline-secondary">
 
-        <div class="glass-card">
+                <svg class="button-icon"
+                     viewBox="0 0 24 24"
+                     aria-hidden="true">
+                    <path d="M19 12H5" />
+                    <path d="m12 19-7-7 7-7" />
+                </svg>
 
-            <div class="section-header">
+                Volver a inscripciones
+
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <div class="form-layout-admin">
+
+        <main class="form-panel">
+
+            <div class="form-panel-header">
+
+                <div class="form-panel-icon primary">
+
+                    <svg viewBox="0 0 24 24"
+                         aria-hidden="true">
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M2 21a7 7 0 0 1 14 0" />
+                        <path d="M19 8v6" />
+                        <path d="M16 11h6" />
+                    </svg>
+
+                </div>
+
                 <div>
-                    <h2>Datos de inscripción</h2>
+
+                    <span class="section-kicker">
+                        REGISTRO ACADÉMICO
+                    </span>
+
+                    <h2>
+                        Datos de inscripción
+                    </h2>
+
                     <p>
-                        Selecciona el estudiante y la materia.
+                        Selecciona el estudiante y la materia que deseas vincular.
                     </p>
+
                 </div>
+
             </div>
 
-            <form asp-action="Create"
-                  method="post"
-                  class="examsecure-form">
 
-                @Html.AntiForgeryToken()
+            <div class="form-panel-body">
 
-                <div asp-validation-summary="ModelOnly"
-                     class="validation-summary"></div>
+                <form asp-action="Create"
+                      method="post">
 
-                <div class="form-group">
+                    @Html.AntiForgeryToken()
 
-                    <label asp-for="EstudianteId">
-                        Estudiante
-                    </label>
+                    <div asp-validation-summary="ModelOnly"
+                         class="validation-summary">
+                    </div>
 
-                    <select asp-for="EstudianteId"
-                            asp-items="ViewBag.Estudiantes"
-                            class="form-control">
 
-                        <option value="">
-                            Seleccionar estudiante...
-                        </option>
+                    <div class="form-section">
 
-                    </select>
+                        <div class="form-section-heading">
 
-                    <span asp-validation-for="EstudianteId"
-                          class="text-danger">
-                    </span>
+                            <span class="form-section-number">
+                                01
+                            </span>
 
-                </div>
+                            <div>
+                                <h3>Estudiante</h3>
+                                <p>
+                                    Selecciona un estudiante activo del sistema.
+                                </p>
+                            </div>
 
-                <div class="form-group">
+                        </div>
 
-                    <label asp-for="MateriaId">
-                        Materia
-                    </label>
 
-                    <select asp-for="MateriaId"
-                            asp-items="ViewBag.Materias"
-                            class="form-control">
+                        <div>
 
-                        <option value="">
-                            Seleccionar materia...
-                        </option>
+                            <label asp-for="EstudianteId"
+                                   class="form-label">
+                                Estudiante
+                            </label>
 
-                    </select>
+                            <select asp-for="EstudianteId"
+                                    asp-items="ViewBag.Estudiantes"
+                                    class="form-select">
 
-                    <span asp-validation-for="MateriaId"
-                          class="text-danger">
-                    </span>
+                                <option value="">
+                                    Seleccionar estudiante...
+                                </option>
 
-                </div>
+                            </select>
 
-                <div class="form-actions">
+                            <span asp-validation-for="EstudianteId"
+                                  class="field-validation">
+                            </span>
 
-                    <a asp-action="Index"
-                       class="btn btn-secondary">
-                        Cancelar
-                    </a>
+                            <div class="form-help">
+                                Solo aparecen estudiantes activos registrados
+                                en el sistema.
+                            </div>
 
-                    <button type="submit"
-                            class="btn btn-primary">
-                        Registrar inscripción
-                    </button>
+                        </div>
 
-                </div>
+                    </div>
 
-            </form>
 
-        </div>
+                    <div class="form-section">
 
-        <div class="glass-card info-card">
+                        <div class="form-section-heading">
 
-            <div class="info-icon">
-                ✓
+                            <span class="form-section-number">
+                                02
+                            </span>
+
+                            <div>
+                                <h3>Materia</h3>
+                                <p>
+                                    Selecciona una materia académica activa.
+                                </p>
+                            </div>
+
+                        </div>
+
+
+                        <div>
+
+                            <label asp-for="MateriaId"
+                                   class="form-label">
+                                Materia
+                            </label>
+
+                            <select asp-for="MateriaId"
+                                    asp-items="ViewBag.Materias"
+                                    class="form-select">
+
+                                <option value="">
+                                    Seleccionar materia...
+                                </option>
+
+                            </select>
+
+                            <span asp-validation-for="MateriaId"
+                                  class="field-validation">
+                            </span>
+
+                            <div class="form-help">
+                                Las materias muestran su código y docente
+                                responsable cuando están disponibles.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-section">
+
+                        <div class="form-section-heading">
+
+                            <span class="form-section-number">
+                                03
+                            </span>
+
+                            <div>
+                                <h3>Confirmación</h3>
+                                <p>
+                                    Verifica la relación antes de registrarla.
+                                </p>
+                            </div>
+
+                        </div>
+
+
+                        <div class="account-status-control">
+
+                            <div>
+
+                                <strong>
+                                    Inscripción activa
+                                </strong>
+
+                                <span>
+                                    El estudiante podrá utilizar posteriormente
+                                    los exámenes disponibles de esta materia.
+                                </span>
+
+                            </div>
+
+                            <div class="registration-confirmation-icon">
+
+                                <svg viewBox="0 0 24 24"
+                                     aria-hidden="true">
+                                    <path d="m5 12 4 4L19 6" />
+                                </svg>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-actions-admin">
+
+                        <a asp-action="Index"
+                           class="btn btn-outline-secondary">
+                            Cancelar
+                        </a>
+
+                        <button type="submit"
+                                class="btn btn-primary">
+
+                            <svg class="button-icon"
+                                 viewBox="0 0 24 24"
+                                 aria-hidden="true">
+                                <path d="m5 12 4 4L19 6" />
+                            </svg>
+
+                            Registrar inscripción
+
+                        </button>
+
+                    </div>
+
+                </form>
+
             </div>
 
-            <h3>¿Qué habilita una inscripción?</h3>
+        </main>
+
+
+        <aside class="form-side-panel">
+
+            <div class="form-side-icon">
+
+                <svg viewBox="0 0 24 24"
+                     aria-hidden="true">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path d="M19 8v6" />
+                    <path d="M16 11h6" />
+                </svg>
+
+            </div>
+
+            <span class="section-kicker">
+                VINCULACIÓN
+            </span>
+
+            <h3>
+                Relación académica
+            </h3>
 
             <p>
                 La inscripción establece oficialmente que el estudiante
                 pertenece a una materia.
             </p>
 
-            <div class="info-list">
+            <div class="side-info-list">
 
                 <div>
-                    <span>01</span>
-                    <p>El estudiante queda vinculado a la materia.</p>
+                    <span class="side-info-dot"></span>
+                    <span>Estudiante activo</span>
                 </div>
 
                 <div>
-                    <span>02</span>
-                    <p>Podrá acceder posteriormente a sus evaluaciones.</p>
+                    <span class="side-info-dot"></span>
+                    <span>Materia activa</span>
                 </div>
 
                 <div>
-                    <span>03</span>
-                    <p>El sistema podrá controlar sus intentos y resultados.</p>
+                    <span class="side-info-dot"></span>
+                    <span>Acceso a evaluaciones</span>
                 </div>
 
             </div>
 
-        </div>
+        </aside>
 
     </div>
 
 </div>
+
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

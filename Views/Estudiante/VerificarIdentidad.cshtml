@@ -22,7 +22,7 @@
                 </h1>
 
                 <p class="text-secondary mb-0">
-                    Antes de comenzar el examen necesitamos verificar tu identidad.
+                    Verifica tu identidad antes de comenzar el examen.
                 </p>
 
             </div>
@@ -50,28 +50,37 @@
 
                         <div class="small">
                             Permite el acceso a la cámara cuando el navegador lo solicite.
-                            Debes colocarte frente a la cámara y mantener tu rostro visible.
+                            Coloca tu rostro frente a la cámara y asegúrate de que sea
+                            claramente visible.
                         </div>
                     </div>
 
                     <div class="camera-container rounded-4 overflow-hidden mb-4"
-                         style="background: #111; min-height: 360px;">
+                         style="background:#111; min-height:360px; position:relative;">
 
                         <video id="video"
                                class="w-100 h-100"
                                autoplay
                                muted
                                playsinline
-                               style="display: block; min-height: 360px; object-fit: cover;">
+                               style="display:block; min-height:360px; object-fit:cover;">
                         </video>
 
-                        <canvas id="canvas" style="display:none;"></canvas>
+                        <div id="faceIndicator"
+                             style="
+                                position:absolute;
+                                inset:20px;
+                                border:2px solid rgba(255,255,255,.35);
+                                border-radius:24px;
+                                pointer-events:none;
+                             ">
+                        </div>
 
                     </div>
 
                     <div id="cameraStatus"
                          class="text-center text-secondary small mb-4">
-                        Preparando cámara...
+                        Preparando reconocimiento facial...
                     </div>
 
                     <div class="d-grid gap-2">
@@ -105,102 +114,383 @@
 
 </div>
 
+<form id="antiForgeryForm" style="display:none;">
+    @Html.AntiForgeryToken()
+</form>
+
 @section Scripts
 {
+    <script src="~/js/facial/face-api.js"></script>
+
     <script>
+
         const video = document.getElementById("video");
-        const canvas = document.getElementById("canvas");
         const status = document.getElementById("cameraStatus");
         const button = document.getElementById("btnVerificar");
         const result = document.getElementById("verificationResult");
 
+        const token = document.querySelector(
+            '#antiForgeryForm input[name="__RequestVerificationToken"]'
+        ).value;
+
+        const intentoId = @Model.Id;
+
+        const rutaModelos = "/models/face";
+
         let stream = null;
+        let modelosCargados = false;
+        let rostroDetectado = false;
+        let verificando = false;
+
+        const detectorOptions =
+            new faceapi.TinyFaceDetectorOptions({
+                inputSize: 320,
+                scoreThreshold: 0.5
+            });
+
+        function mostrarResultado(tipo, mensaje) {
+
+            result.style.display = "block";
+
+            result.innerHTML = `
+                <div class="alert alert-${tipo} border-0 mb-0">
+                    ${mensaje}
+                </div>
+            `;
+        }
+
+        async function cargarModelos() {
+
+            try {
+
+                status.textContent =
+                    "Cargando modelos de reconocimiento facial...";
+
+                await Promise.all([
+
+                    faceapi.nets.tinyFaceDetector.loadFromUri(
+                        rutaModelos
+                    ),
+
+                    faceapi.nets.faceLandmark68Net.loadFromUri(
+                        rutaModelos
+                    ),
+
+                    faceapi.nets.faceRecognitionNet.loadFromUri(
+                        rutaModelos
+                    )
+
+                ]);
+
+                modelosCargados = true;
+
+                status.textContent =
+                    "Modelos cargados. Preparando cámara...";
+
+            }
+            catch (error) {
+
+                console.error(error);
+
+                status.textContent =
+                    "No fue posible cargar el reconocimiento facial.";
+
+                mostrarResultado(
+                    "danger",
+                    "No se pudieron cargar los modelos de reconocimiento facial."
+                );
+
+            }
+
+        }
 
         async function iniciarCamara() {
+
             try {
+
                 stream = await navigator.mediaDevices.getUserMedia({
+
                     video: {
                         facingMode: "user",
                         width: { ideal: 1280 },
                         height: { ideal: 720 }
                     },
+
                     audio: false
+
                 });
 
                 video.srcObject = stream;
 
+                await video.play();
+
                 status.textContent =
-                    "Cámara activa. Coloca tu rostro frente a la cámara.";
+                    "Cámara activa. Buscando tu rostro...";
 
-                button.disabled = false;
+                iniciarDeteccion();
 
-            } catch (error) {
+            }
+            catch (error) {
 
                 console.error(error);
 
                 status.textContent =
                     "No fue posible acceder a la cámara.";
 
-                result.style.display = "block";
+                mostrarResultado(
+                    "danger",
+                    "Debes permitir el acceso a la cámara para continuar con el examen."
+                );
 
-                result.innerHTML = `
-                    <div class="alert alert-danger border-0">
-                        Debes permitir el acceso a la cámara
-                        para continuar con el examen.
-                    </div>
-                `;
             }
+
         }
 
-        button.addEventListener("click", async function () {
+        async function iniciarDeteccion() {
 
+            while (
+                stream &&
+                stream.active &&
+                !verificando
+            ) {
+
+                if (!modelosCargados) {
+                    await new Promise(resolve =>
+                        setTimeout(resolve, 300)
+                    );
+                    continue;
+                }
+
+                if (
+                    video.readyState >= 2 &&
+                    video.videoWidth > 0
+                ) {
+
+                    try {
+
+                        const detecciones =
+                            await faceapi
+                                .detectAllFaces(
+                                    video,
+                                    detectorOptions
+                                )
+                                .withFaceLandmarks()
+                                .withFaceDescriptors();
+
+                        if (detecciones.length === 0) {
+
+                            rostroDetectado = false;
+                            button.disabled = true;
+
+                            status.textContent =
+                                "No se detecta ningún rostro.";
+
+                        }
+                        else if (detecciones.length > 1) {
+
+                            rostroDetectado = false;
+                            button.disabled = true;
+
+                            status.textContent =
+                                "Se detectaron varios rostros. Debe haber una sola persona.";
+
+                        }
+                        else {
+
+                            rostroDetectado = true;
+                            button.disabled = false;
+
+                            status.textContent =
+                                "Rostro detectado. Puedes verificar tu identidad.";
+
+                        }
+
+                    }
+                    catch (error) {
+
+                        console.error(
+                            "Error durante la detección facial:",
+                            error
+                        );
+
+                    }
+
+                }
+
+                await new Promise(resolve =>
+                    setTimeout(resolve, 500)
+                );
+
+            }
+
+        }
+
+        async function verificarIdentidad() {
+
+            if (verificando || !rostroDetectado) {
+                return;
+            }
+
+            verificando = true;
             button.disabled = true;
 
             status.textContent =
-                "Capturando imagen...";
+                "Analizando tu rostro...";
 
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
+            result.style.display = "none";
 
-            const context = canvas.getContext("2d");
+            try {
 
-            context.drawImage(
-                video,
-                0,
-                0,
-                canvas.width,
-                canvas.height
-            );
+                const detecciones =
+                    await faceapi
+                        .detectAllFaces(
+                            video,
+                            detectorOptions
+                        )
+                        .withFaceLandmarks()
+                        .withFaceDescriptors();
 
-            const imageData =
-                canvas.toDataURL("image/jpeg", 0.9);
+                if (detecciones.length === 0) {
 
-            console.log("Imagen capturada:", imageData.length);
+                    throw new Error(
+                        "No se detectó ningún rostro."
+                    );
 
-            status.textContent =
-                "Captura realizada. La verificación facial se conectará en el siguiente paso.";
+                }
 
-            result.style.display = "block";
+                if (detecciones.length > 1) {
 
-            result.innerHTML = `
-                <div class="alert alert-info border-0">
-                    Captura realizada correctamente.
-                    El motor de reconocimiento facial será integrado
-                    en el siguiente paso.
-                </div>
-            `;
+                    throw new Error(
+                        "Se detectaron varios rostros."
+                    );
 
-            button.disabled = false;
-        });
+                }
 
-        window.addEventListener("beforeunload", function () {
+                const descriptor =
+                    Array.from(
+                        detecciones[0].descriptor
+                    );
 
-            if (stream) {
-                stream.getTracks().forEach(track => track.stop());
+                const respuesta =
+                    await fetch(
+                        "@Url.Action("VerificarRostro", "Estudiante")",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/x-www-form-urlencoded; charset=UTF-8"
+                            },
+
+                            body:
+                                new URLSearchParams({
+
+                                    __RequestVerificationToken:
+                                        token,
+
+                                    id:
+                                        intentoId.toString(),
+
+                                    descriptor:
+                                        descriptor.join(",")
+
+                                })
+
+                        }
+                    );
+
+                const datos = await respuesta.json();
+
+                if (datos.success === true) {
+
+                    status.textContent =
+                        "Identidad verificada correctamente.";
+
+                    mostrarResultado(
+                        "success",
+                        "Identidad verificada. Iniciando el examen..."
+                    );
+
+                    detenerCamara();
+
+                    setTimeout(() => {
+
+                        window.location.href =
+                            "@Url.Action("ResolverExamen", "Estudiante", new { id = Model.Id })";
+
+                    }, 800);
+
+                    return;
+                }
+
+                verificando = false;
+                button.disabled = false;
+
+                status.textContent =
+                    "La identidad no pudo ser verificada.";
+
+                mostrarResultado(
+                    "danger",
+                    datos.message ||
+                    "El rostro no coincide con el registro facial."
+                );
+
+            }
+            catch (error) {
+
+                console.error(error);
+
+                verificando = false;
+                button.disabled = false;
+
+                status.textContent =
+                    "No fue posible completar la verificación.";
+
+                mostrarResultado(
+                    "danger",
+                    error.message ||
+                    "Ocurrió un error durante la verificación."
+                );
+
             }
 
-        });
+        }
 
-        iniciarCamara();
+        function detenerCamara() {
+
+            if (stream) {
+
+                stream
+                    .getTracks()
+                    .forEach(track => track.stop());
+
+                stream = null;
+
+            }
+
+        }
+
+        button.addEventListener(
+            "click",
+            verificarIdentidad
+        );
+
+        window.addEventListener(
+            "beforeunload",
+            detenerCamara
+        );
+
+        async function iniciar() {
+
+            await cargarModelos();
+
+            if (modelosCargados) {
+                await iniciarCamara();
+            }
+
+        }
+
+        iniciar();
+
     </script>
 }

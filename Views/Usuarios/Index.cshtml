@@ -6,216 +6,383 @@
     var rolesPorUsuario =
         ViewBag.RolesPorUsuario as Dictionary<string, string>
         ?? new Dictionary<string, string>();
+
+    var usuarios = Model.ToList();
 }
 
-<div class="container py-5">
+<div class="page-shell">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <section class="page-hero">
 
         <div>
-            <span class="badge bg-dark mb-2">
-                EXAMSECURE
-            </span>
 
-            <h1 class="display-6 fw-bold mb-1">
-                Gestion de usuarios
+            <div class="eyebrow">
+                <span class="eyebrow-dot"></span>
+                ADMINISTRACIÓN
+            </div>
+
+            <h1>
+                Gestión de usuarios
             </h1>
 
-            <p class="text-muted mb-0">
-                Administra estudiantes y docentes del sistema.
+            <p>
+                Administra estudiantes y docentes, sus datos,
+                roles y acceso a la plataforma.
             </p>
+
         </div>
 
-        <div class="d-flex gap-2">
+        <div class="hero-actions">
 
             <a asp-controller="Home"
                asp-action="Index"
                class="btn btn-outline-secondary">
+
+                <svg class="button-icon"
+                     viewBox="0 0 24 24"
+                     aria-hidden="true">
+                    <path d="M3 11.5 12 4l9 7.5" />
+                    <path d="M5 10v10h14V10" />
+                    <path d="M9 20v-6h6v6" />
+                </svg>
+
                 Panel
+
             </a>
 
             <a asp-action="Create"
-               class="btn btn-dark">
-                + Nuevo usuario
+               class="btn btn-primary">
+
+                <svg class="button-icon"
+                     viewBox="0 0 24 24"
+                     aria-hidden="true">
+                    <path d="M12 5v14" />
+                    <path d="M5 12h14" />
+                </svg>
+
+                Nuevo usuario
+
             </a>
 
         </div>
 
-    </div>
+    </section>
+
 
     @if (TempData["Success"] != null)
     {
-        <div class="alert alert-success alert-dismissible fade show">
-            @TempData["Success"]
-
-            <button type="button"
-                    class="btn-close"
-                    data-bs-dismiss="alert">
-            </button>
+        <div class="exam-toast success-toast mb-4">
+            <span class="toast-icon">✓</span>
+            <span>@TempData["Success"]</span>
         </div>
     }
 
     @if (TempData["Error"] != null)
     {
-        <div class="alert alert-danger alert-dismissible fade show">
-            @TempData["Error"]
-
-            <button type="button"
-                    class="btn-close"
-                    data-bs-dismiss="alert">
-            </button>
+        <div class="exam-toast error-toast mb-4">
+            <span class="toast-icon">!</span>
+            <span>@TempData["Error"]</span>
         </div>
     }
 
-    <div class="card shadow-sm border-0">
 
-        <div class="card-header bg-dark text-white py-3">
-            <strong>Usuarios registrados</strong>
+    <section class="admin-summary-grid mb-4">
+
+        <div class="admin-summary-card">
+
+            <div class="admin-summary-icon primary">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                </svg>
+            </div>
+
+            <div>
+                <span>Total registrados</span>
+                <strong>@usuarios.Count</strong>
+            </div>
+
         </div>
 
-        <div class="card-body p-0">
 
-            <div class="table-responsive">
+        <div class="admin-summary-card">
 
-                <table class="table table-hover align-middle mb-0">
+            <div class="admin-summary-icon cyan">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="8" r="4" />
+                    <path d="M4 21a8 8 0 0 1 16 0" />
+                </svg>
+            </div>
 
-                    <thead class="table-light">
+            <div>
+                <span>Estudiantes</span>
+                <strong>
+                    @usuarios.Count(u =>
+                    rolesPorUsuario.TryGetValue(u.Id, out var rol) &&
+                    rol == "Estudiante")
+                </strong>
+            </div>
 
-                        <tr>
-                            <th class="ps-4">
-                                Nombre completo
-                            </th>
+        </div>
 
-                            <th>
-                                C.I.
-                            </th>
 
-                            <th>
-                                Correo
-                            </th>
+        <div class="admin-summary-card">
 
-                            <th>
-                                Rol
-                            </th>
+            <div class="admin-summary-icon success">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 3 4 6v5c0 5.25 3.44 9.67 8 11 4.56-1.33 8-5.75 8-11V6l-8-3Z" />
+                    <path d="m9 12 2 2 4-4" />
+                </svg>
+            </div>
 
-                            <th>
-                                Estado
-                            </th>
+            <div>
+                <span>Docentes</span>
+                <strong>
+                    @usuarios.Count(u =>
+                    rolesPorUsuario.TryGetValue(u.Id, out var rol) &&
+                    rol == "Docente")
+                </strong>
+            </div>
 
-                            <th>
-                                Creado
-                            </th>
+        </div>
 
-                            <th class="text-end pe-4">
-                                Acciones
-                            </th>
-                        </tr>
+    </section>
 
-                    </thead>
 
-                    <tbody>
+    <section class="data-panel">
 
-                    @foreach (var usuario in Model)
-                    {
-                        var rol =
-                            rolesPorUsuario.ContainsKey(usuario.Id)
-                                ? rolesPorUsuario[usuario.Id]
-                                : "Sin rol";
+        <div class="data-panel-header">
 
-                        var desactivado =
-                            usuario.LockoutEnd.HasValue &&
-                            usuario.LockoutEnd.Value >
-                            DateTimeOffset.UtcNow;
+            <div>
+                <span class="section-kicker">
+                    CUENTAS DEL SISTEMA
+                </span>
 
-                        <tr>
+                <h2>
+                    Usuarios registrados
+                </h2>
 
-                            <td class="ps-4">
-                                <strong>
-                                    @usuario.NombreCompleto
-                                </strong>
-                            </td>
+                <p>
+                    Consulta y administra las cuentas existentes.
+                </p>
+            </div>
 
-                            <td>
-                                @(usuario.CedulaIdentidad ?? "ï¿½")
-                            </td>
+            <span class="record-count">
+                @usuarios.Count registros
+            </span>
 
-                            <td>
+        </div>
+
+
+        <div class="table-responsive">
+
+            <table class="table examsecure-table align-middle mb-0">
+
+                <thead>
+
+                    <tr>
+
+                        <th class="ps-4">
+                            Usuario
+                        </th>
+
+                        <th>
+                            C.I.
+                        </th>
+
+                        <th>
+                            Correo
+                        </th>
+
+                        <th>
+                            Rol
+                        </th>
+
+                        <th>
+                            Estado
+                        </th>
+
+                        <th>
+                            Creado
+                        </th>
+
+                        <th class="text-end pe-4">
+                            Acciones
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                @foreach (var usuario in usuarios)
+                {
+                    var rol =
+                        rolesPorUsuario.TryGetValue(
+                            usuario.Id,
+                            out var rolUsuario)
+                            ? rolUsuario
+                            : "Sin rol";
+
+                    var desactivado =
+                        usuario.LockoutEnd.HasValue &&
+                        usuario.LockoutEnd.Value >
+                        DateTimeOffset.UtcNow;
+
+                    var inicial =
+                        !string.IsNullOrWhiteSpace(usuario.Nombres)
+                            ? usuario.Nombres.Substring(0, 1).ToUpper()
+                            : "U";
+
+                    <tr>
+
+                        <td class="ps-4">
+
+                            <div class="table-user">
+
+                                <div class="table-user-avatar">
+                                    @inicial
+                                </div>
+
+                                <div>
+
+                                    <strong>
+                                        @usuario.NombreCompleto
+                                    </strong>
+
+                                    <small>
+                                        @usuario.Telefono
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+                        </td>
+
+
+                        <td>
+                            @(string.IsNullOrWhiteSpace(usuario.CedulaIdentidad)
+                                ? "No registrada"
+                                : usuario.CedulaIdentidad)
+                        </td>
+
+
+                        <td>
+                            <span class="table-email">
                                 @usuario.Email
-                            </td>
+                            </span>
+                        </td>
 
-                            <td>
 
-                                @if (rol == "Administrador")
-                                {
-                                    <span class="badge bg-dark">
-                                        Administrador
-                                    </span>
-                                }
-                                else if (rol == "Docente")
-                                {
-                                    <span class="badge bg-primary">
-                                        Docente
-                                    </span>
-                                }
-                                else if (rol == "Estudiante")
-                                {
-                                    <span class="badge bg-secondary">
-                                        Estudiante
-                                    </span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-light text-dark">
-                                        Sin rol
-                                    </span>
-                                }
+                        <td>
 
-                            </td>
+                            @if (rol == "Administrador")
+                            {
+                                <span class="status-badge status-neutral">
+                                    Administrador
+                                </span>
+                            }
+                            else if (rol == "Docente")
+                            {
+                                <span class="status-badge status-info">
+                                    Docente
+                                </span>
+                            }
+                            else if (rol == "Estudiante")
+                            {
+                                <span class="status-badge status-primary">
+                                    Estudiante
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="status-badge status-neutral">
+                                    Sin rol
+                                </span>
+                            }
 
-                            <td>
+                        </td>
 
-                                @if (desactivado)
-                                {
-                                    <span class="badge bg-danger">
-                                        Inactivo
-                                    </span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-success">
-                                        Activo
-                                    </span>
-                                }
 
-                            </td>
+                        <td>
 
-                            <td>
-    @usuario.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
-</td>
+                            @if (desactivado)
+                            {
+                                <span class="status-badge status-danger">
+                                    <span class="status-badge-dot"></span>
+                                    Inactivo
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="status-badge status-success">
+                                    <span class="status-badge-dot"></span>
+                                    Activo
+                                </span>
+                            }
 
-                            <td class="text-end pe-4">
+                        </td>
 
-                                @if (rol != "Administrador")
-                                {
+
+                        <td>
+                            <span class="table-date">
+                                @usuario.CreatedAt
+                                    .ToLocalTime()
+                                    .ToString("dd/MM/yyyy HH:mm")
+                            </span>
+                        </td>
+
+
+                        <td class="text-end pe-4">
+
+                            @if (rol != "Administrador")
+                            {
+                                <div class="action-group justify-content-end">
+
                                     <a asp-action="Edit"
                                        asp-route-id="@usuario.Id"
-                                       class="btn btn-sm btn-outline-dark">
+                                       class="table-action">
+
+                                        <svg viewBox="0 0 24 24"
+                                             aria-hidden="true">
+                                            <path d="M12 20h9" />
+                                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+                                        </svg>
+
                                         Editar
+
                                     </a>
+
 
                                     @if (rol == "Estudiante")
                                     {
                                         <a asp-controller="RegistroFacial"
                                            asp-action="Registrar"
                                            asp-route-id="@usuario.Id"
-                                           class="btn btn-sm btn-outline-primary">
-                                            Registrar rostro
+                                           class="table-action table-action-primary">
+
+                                            <svg viewBox="0 0 24 24"
+                                                 aria-hidden="true">
+                                                <circle cx="12" cy="12" r="8" />
+                                                <path d="M9 9h.01" />
+                                                <path d="M15 9h.01" />
+                                                <path d="M8 14c1.2 1.3 2.8 2 4 2s2.8-.7 4-2" />
+                                            </svg>
+
+                                            Rostro
+
                                         </a>
                                     }
 
+
                                     <form asp-action="ToggleEstado"
                                           method="post"
-                                          class="d-inline">
+                                          class="inline-form">
 
                                         @Html.AntiForgeryToken()
 
@@ -226,50 +393,93 @@
                                         @if (desactivado)
                                         {
                                             <button type="submit"
-                                                    class="btn btn-sm btn-outline-success">
+                                                    class="table-action table-action-success">
+
+                                                <svg viewBox="0 0 24 24"
+                                                     aria-hidden="true">
+                                                    <path d="m5 12 4 4L19 6" />
+                                                </svg>
+
                                                 Activar
+
                                             </button>
                                         }
                                         else
                                         {
                                             <button type="submit"
-                                                    class="btn btn-sm btn-outline-danger">
+                                                    class="table-action table-action-danger">
+
+                                                <svg viewBox="0 0 24 24"
+                                                     aria-hidden="true">
+                                                    <circle cx="12" cy="12" r="9" />
+                                                    <path d="M8 12h8" />
+                                                </svg>
+
                                                 Desactivar
+
                                             </button>
                                         }
 
                                     </form>
-                                }
-                                else
-                                {
-                                    <span class="text-muted small">
-                                        Cuenta protegida
-                                    </span>
-                                }
 
-                            </td>
+                                </div>
+                            }
+                            else
+                            {
+                                <span class="protected-account">
+                                    Cuenta protegida
+                                </span>
+                            }
 
-                        </tr>
-                    }
+                        </td>
 
-                    @if (!Model.Any())
-                    {
-                        <tr>
-                            <td colspan="7"
-                                class="text-center py-5 text-muted">
-                                No existen usuarios registrados.
-                            </td>
-                        </tr>
-                    }
+                    </tr>
+                }
 
-                    </tbody>
 
-                </table>
+                @if (!usuarios.Any())
+                {
+                    <tr>
 
-            </div>
+                        <td colspan="7">
+
+                            <div class="empty-state">
+
+                                <div class="empty-state-icon">
+                                    <svg viewBox="0 0 24 24"
+                                         aria-hidden="true">
+                                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                                        <circle cx="9" cy="7" r="4" />
+                                    </svg>
+                                </div>
+
+                                <h3>
+                                    No hay usuarios registrados
+                                </h3>
+
+                                <p>
+                                    Cuando registres estudiantes o docentes,
+                                    aparecerán aquí.
+                                </p>
+
+                                <a asp-action="Create"
+                                   class="btn btn-primary">
+                                    Crear primer usuario
+                                </a>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+                }
+
+                </tbody>
+
+            </table>
 
         </div>
 
-    </div>
+    </section>
 
 </div>

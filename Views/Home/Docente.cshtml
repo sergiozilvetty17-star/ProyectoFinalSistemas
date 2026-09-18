@@ -2,120 +2,196 @@
     ViewData["Title"] = "Panel Docente";
 }
 
-<div class="examsecure-container">
+<div class="examsecure-container dashboard-page">
 
-    <section class="examsecure-hero reveal">
+    <section class="examsecure-hero reveal dashboard-hero">
 
         <div class="examsecure-eyebrow">
-
             <span class="examsecure-status-dot"></span>
-
             ESPACIO DOCENTE
-
         </div>
 
         <h1 class="examsecure-title">
-
             Tus evaluaciones.
-
             <span class="examsecure-gradient-text">
                 Bajo control.
             </span>
-
         </h1>
 
         <p class="examsecure-subtitle">
-
             Crea evaluaciones, configura preguntas y controla
-            el proceso de evaluación de tus estudiantes.
-
+            el proceso de evaluación de tus estudiantes desde
+            un único espacio académico.
         </p>
 
     </section>
 
 
-    <section class="row g-4 pb-5">
+    <section class="dashboard-grid pb-5">
 
-        <div class="col-md-6 col-xl-4 reveal reveal-delay-1">
+        <!-- MATERIAS -->
 
-            <div class="examsecure-card h-100 p-4">
+        <article class="examsecure-card dashboard-card dashboard-card-static reveal reveal-delay-1">
 
-                <div class="examsecure-card-icon">
-                    ▦
+            <div class="dashboard-card-top">
+
+                <div class="dashboard-icon dashboard-icon-cyan">
+
+                    <svg viewBox="0 0 24 24"
+                         aria-hidden="true">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z" />
+                        <path d="M8 6h8" />
+                        <path d="M8 10h8" />
+                    </svg>
+
                 </div>
 
-                <h4 class="text-white fw-bold">
-                    Mis materias
-                </h4>
-
-                <p class="text-secondary">
-                    Consulta las materias académicas que tienes asignadas.
-                </p>
-
-                <span class="examsecure-badge examsecure-badge-neutral">
-                    Gestión académica
+                <span class="dashboard-status-dot"
+                      style="background:#38bdf8; box-shadow:0 0 0 4px rgba(56,189,248,.10), 0 0 18px rgba(56,189,248,.25);">
                 </span>
 
             </div>
 
-        </div>
+            <div class="dashboard-card-content">
+
+                <span class="dashboard-card-label">
+                    GESTIÓN ACADÉMICA
+                </span>
+
+                <h3>
+                    Mis materias
+                </h3>
+
+                <p>
+                    Consulta las materias académicas que tienes
+                    asignadas y la estructura de tus cursos.
+                </p>
+
+            </div>
+
+            <div class="dashboard-card-footer">
+
+                <span class="dashboard-status-text"
+                      style="color:#7dd3fc;">
+                    Materias asignadas
+                </span>
+
+            </div>
+
+        </article>
 
 
-        <div class="col-md-6 col-xl-4 reveal reveal-delay-2">
+        <!-- EXÁMENES -->
 
-            <a asp-controller="Examenes"
-               asp-action="Index"
-               class="text-decoration-none">
+        <a asp-controller="Examenes"
+           asp-action="Index"
+           class="dashboard-card-link reveal reveal-delay-2">
 
-                <div class="examsecure-card h-100 p-4">
+            <article class="examsecure-card dashboard-card">
 
-                    <div class="examsecure-card-icon">
-                        ◆
+                <div class="dashboard-card-top">
+
+                    <div class="dashboard-icon dashboard-icon-primary">
+
+                        <svg viewBox="0 0 24 24"
+                             aria-hidden="true">
+                            <path d="M6 3h12a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z" />
+                            <path d="M8 7h8" />
+                            <path d="M8 11h8" />
+                            <path d="M8 15h5" />
+                        </svg>
+
                     </div>
 
-                    <h4 class="text-white fw-bold">
-                        Exámenes
-                    </h4>
+                    <span class="dashboard-arrow"
+                          aria-hidden="true">
 
-                    <p class="text-secondary">
-                        Crea, configura y publica tus evaluaciones.
-                    </p>
+                        <svg viewBox="0 0 24 24">
+                            <path d="M5 12h14" />
+                            <path d="m13 6 6 6-6 6" />
+                        </svg>
 
-                    <span class="text-primary fw-semibold">
-                        Administrar exámenes →
                     </span>
 
                 </div>
 
-            </a>
+                <div class="dashboard-card-content">
 
-        </div>
+                    <span class="dashboard-card-label">
+                        EVALUACIONES
+                    </span>
 
+                    <h3>
+                        Exámenes
+                    </h3>
 
-        <div class="col-md-6 col-xl-4 reveal reveal-delay-3">
+                    <p>
+                        Crea, configura y publica tus evaluaciones
+                        con preguntas y parámetros de tiempo.
+                    </p>
 
-            <div class="examsecure-card h-100 p-4">
-
-                <div class="examsecure-card-icon">
-                    ↗
                 </div>
 
-                <h4 class="text-white fw-bold">
-                    Resultados
-                </h4>
+                <div class="dashboard-card-footer">
+                    <span>
+                        Administrar exámenes
+                    </span>
+                </div>
 
-                <p class="text-secondary">
-                    Las calificaciones aparecerán aquí cuando
-                    tus estudiantes completen evaluaciones.
+            </article>
+
+        </a>
+
+
+        <!-- RESULTADOS -->
+
+        <article class="examsecure-card dashboard-card dashboard-card-static reveal reveal-delay-3">
+
+            <div class="dashboard-card-top">
+
+                <div class="dashboard-icon dashboard-icon-success">
+
+                    <svg viewBox="0 0 24 24"
+                         aria-hidden="true">
+                        <path d="M4 19V5" />
+                        <path d="M4 19h17" />
+                        <path d="m7 15 4-4 3 2 5-6" />
+                    </svg>
+
+                </div>
+
+                <span class="dashboard-status-dot">
+                </span>
+
+            </div>
+
+            <div class="dashboard-card-content">
+
+                <span class="dashboard-card-label">
+                    SEGUIMIENTO
+                </span>
+
+                <h3>
+                    Resultados
+                </h3>
+
+                <p>
+                    Consulta las calificaciones y el desempeño
+                    de tus estudiantes después de las evaluaciones.
                 </p>
 
-                <span class="examsecure-badge examsecure-badge-neutral">
+            </div>
+
+            <div class="dashboard-card-footer">
+
+                <span class="dashboard-status-text">
                     Preparado para resultados
                 </span>
 
             </div>
 
-        </div>
+        </article>
 
     </section>
 

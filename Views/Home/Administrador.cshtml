@@ -2,128 +2,191 @@
     ViewData["Title"] = "Administrador";
 }
 
-<div class="examsecure-container">
+<div class="examsecure-container dashboard-page">
 
-    <section class="examsecure-hero reveal">
+    <section class="examsecure-hero reveal dashboard-hero">
 
         <div class="examsecure-eyebrow">
-
             <span class="examsecure-status-dot"></span>
-
             PANEL DE CONTROL
-
         </div>
 
         <h1 class="examsecure-title">
-
             Control total.
-
             <span class="examsecure-gradient-text">
                 Seguridad primero.
             </span>
-
         </h1>
 
         <p class="examsecure-subtitle">
-
-            Administra usuarios, estructura académica y configuración
+            Administra usuarios, estructura académica y seguridad
             de la plataforma desde un único centro de control.
-
         </p>
 
     </section>
 
 
-    <section class="row g-4 pb-5">
+    <section class="dashboard-grid pb-5">
 
-        <div class="col-md-6 col-xl-4 reveal reveal-delay-1">
+        <!-- USUARIOS -->
 
-            <a asp-controller="Usuarios"
-               asp-action="Index"
-               class="text-decoration-none">
+        <a asp-controller="Usuarios"
+           asp-action="Index"
+           class="dashboard-card-link reveal reveal-delay-1">
 
-                <div class="examsecure-card h-100 p-4">
+            <article class="examsecure-card dashboard-card">
 
-                    <div class="examsecure-card-icon">
-                        ◉
+                <div class="dashboard-card-top">
+
+                    <div class="dashboard-icon dashboard-icon-primary">
+
+                        <svg viewBox="0 0 24 24"
+                             aria-hidden="true">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                            <circle cx="9" cy="7" r="4" />
+                            <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                        </svg>
+
                     </div>
 
-                    <h4 class="text-white fw-bold">
+                    <span class="dashboard-arrow" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M5 12h14" />
+                            <path d="m13 6 6 6-6 6" />
+                        </svg>
+                    </span>
+
+                </div>
+
+                <div class="dashboard-card-content">
+
+                    <span class="dashboard-card-label">
+                        ADMINISTRACIÓN
+                    </span>
+
+                    <h3>
                         Usuarios
-                    </h4>
+                    </h3>
 
-                    <p class="text-secondary">
-                        Administra estudiantes y docentes,
-                        sus datos académicos y estado de acceso.
+                    <p>
+                        Administra estudiantes y docentes, sus datos
+                        académicos y el estado de acceso a la plataforma.
                     </p>
-
-                    <span class="text-primary fw-semibold">
-                        Gestionar usuarios →
-                    </span>
 
                 </div>
 
-            </a>
+                <div class="dashboard-card-footer">
+                    <span>Gestionar usuarios</span>
+                </div>
 
-        </div>
+            </article>
+
+        </a>
 
 
-        <div class="col-md-6 col-xl-4 reveal reveal-delay-2">
+        <!-- MATERIAS -->
 
-            <a asp-controller="Materias"
-               asp-action="Index"
-               class="text-decoration-none">
+        <a asp-controller="Materias"
+           asp-action="Index"
+           class="dashboard-card-link reveal reveal-delay-2">
 
-                <div class="examsecure-card h-100 p-4">
+            <article class="examsecure-card dashboard-card">
 
-                    <div class="examsecure-card-icon">
-                        ▦
+                <div class="dashboard-card-top">
+
+                    <div class="dashboard-icon dashboard-icon-cyan">
+
+                        <svg viewBox="0 0 24 24"
+                             aria-hidden="true">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z" />
+                            <path d="M8 6h8" />
+                            <path d="M8 10h8" />
+                        </svg>
+
                     </div>
 
-                    <h4 class="text-white fw-bold">
-                        Materias
-                    </h4>
-
-                    <p class="text-secondary">
-                        Organiza las materias académicas y
-                        asigna docentes responsables.
-                    </p>
-
-                    <span class="text-primary fw-semibold">
-                        Gestionar materias →
+                    <span class="dashboard-arrow" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M5 12h14" />
+                            <path d="m13 6 6 6-6 6" />
+                        </svg>
                     </span>
 
                 </div>
 
-            </a>
+                <div class="dashboard-card-content">
 
-        </div>
+                    <span class="dashboard-card-label">
+                        ESTRUCTURA ACADÉMICA
+                    </span>
 
+                    <h3>
+                        Materias
+                    </h3>
 
-        <div class="col-md-6 col-xl-4 reveal reveal-delay-3">
+                    <p>
+                        Organiza las materias académicas y asigna
+                        docentes responsables de cada curso.
+                    </p>
 
-            <div class="examsecure-card h-100 p-4">
-
-                <div class="examsecure-card-icon">
-                    ◈
                 </div>
 
-                <h4 class="text-white fw-bold">
-                    Seguridad
-                </h4>
+                <div class="dashboard-card-footer">
+                    <span>Gestionar materias</span>
+                </div>
 
-                <p class="text-secondary">
+            </article>
+
+        </a>
+
+
+        <!-- SEGURIDAD -->
+
+        <article class="examsecure-card dashboard-card dashboard-card-static reveal reveal-delay-3">
+
+            <div class="dashboard-card-top">
+
+                <div class="dashboard-icon dashboard-icon-success">
+
+                    <svg viewBox="0 0 24 24"
+                         aria-hidden="true">
+                        <path d="M12 3 4 6v5c0 5.25 3.44 9.67 8 11 4.56-1.33 8-5.75 8-11V6l-8-3Z" />
+                        <path d="m9 12 2 2 4-4" />
+                    </svg>
+
+                </div>
+
+                <span class="dashboard-status-dot">
+                </span>
+
+            </div>
+
+            <div class="dashboard-card-content">
+
+                <span class="dashboard-card-label">
+                    MONITOREO
+                </span>
+
+                <h3>
+                    Seguridad
+                </h3>
+
+                <p>
                     El sistema registra eventos de autenticación,
                     actividad y seguridad durante las evaluaciones.
                 </p>
 
-                <div class="examsecure-badge examsecure-badge-success">
-                    Sistema protegido
-                </div>
-
             </div>
 
-        </div>
+            <div class="dashboard-card-footer">
+                <span class="dashboard-status-text">
+                    Sistema protegido
+                </span>
+            </div>
+
+        </article>
 
     </section>
 

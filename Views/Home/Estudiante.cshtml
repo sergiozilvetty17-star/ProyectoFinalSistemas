@@ -2,115 +2,185 @@
     ViewData["Title"] = "Panel Estudiante";
 }
 
-<div class="examsecure-container">
+<div class="examsecure-container dashboard-page">
 
-    <section class="examsecure-hero reveal">
+    <section class="examsecure-hero reveal dashboard-hero">
 
         <div class="examsecure-eyebrow">
-
             <span class="examsecure-status-dot"></span>
-
             ESPACIO ESTUDIANTE
-
         </div>
 
         <h1 class="examsecure-title">
-
             Prepárate.
-
             <span class="examsecure-gradient-text">
                 Demuestra lo que sabes.
             </span>
-
         </h1>
 
         <p class="examsecure-subtitle">
-
-            Accede a tus evaluaciones y completa cada examen
-            bajo un entorno diseñado para garantizar la integridad académica.
-
+            Accede a tus materias, evaluaciones y resultados
+            desde un entorno diseñado para garantizar la
+            integridad académica.
         </p>
 
     </section>
 
 
-    <section class="row g-4 pb-5">
+    <section class="dashboard-grid pb-5">
 
-        <div class="col-md-6 col-xl-4 reveal reveal-delay-1">
+        <!-- MATERIAS -->
 
-            <div class="examsecure-card h-100 p-4">
+        <article class="examsecure-card dashboard-card dashboard-card-static reveal reveal-delay-1">
 
-                <div class="examsecure-card-icon">
-                    ▦
+            <div class="dashboard-card-top">
+
+                <div class="dashboard-icon dashboard-icon-cyan">
+
+                    <svg viewBox="0 0 24 24"
+                         aria-hidden="true">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z" />
+                        <path d="M8 6h8" />
+                        <path d="M8 10h8" />
+                    </svg>
+
                 </div>
 
-                <h4 class="text-white fw-bold">
-                    Mis materias
-                </h4>
-
-                <p class="text-secondary">
-                    Consulta tus materias y cursos inscritos.
-                </p>
-
-                <span class="examsecure-badge examsecure-badge-neutral">
-                    Área académica
+                <span class="dashboard-status-dot"
+                      style="background:#38bdf8; box-shadow:0 0 0 4px rgba(56,189,248,.10), 0 0 18px rgba(56,189,248,.25);">
                 </span>
 
             </div>
 
-        </div>
+            <div class="dashboard-card-content">
 
+                <span class="dashboard-card-label">
+                    ÁREA ACADÉMICA
+                </span>
 
-        <div class="col-md-6 col-xl-4 reveal reveal-delay-2">
+                <h3>
+                    Mis materias
+                </h3>
 
-            <div class="examsecure-card h-100 p-4">
-
-                <div class="examsecure-card-icon">
-                    ◆
-                </div>
-
-                <h4 class="text-white fw-bold">
-                    Exámenes disponibles
-                </h4>
-
-                <p class="text-secondary">
-                    Aquí aparecerán las evaluaciones disponibles
-                    para realizar.
+                <p>
+                    Consulta tus materias y cursos en los que
+                    te encuentras actualmente inscrito.
                 </p>
 
-                <span class="examsecure-badge examsecure-badge-neutral">
+            </div>
+
+            <div class="dashboard-card-footer">
+
+                <span class="dashboard-status-text"
+                      style="color:#7dd3fc;">
+                    Materias inscritas
+                </span>
+
+            </div>
+
+        </article>
+
+
+        <!-- EXÁMENES -->
+
+        <article class="examsecure-card dashboard-card dashboard-card-static reveal reveal-delay-2">
+
+            <div class="dashboard-card-top">
+
+                <div class="dashboard-icon dashboard-icon-primary">
+
+                    <svg viewBox="0 0 24 24"
+                         aria-hidden="true">
+                        <path d="M6 3h12a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z" />
+                        <path d="M8 7h8" />
+                        <path d="M8 11h8" />
+                        <path d="M8 15h5" />
+                    </svg>
+
+                </div>
+
+                <span class="dashboard-status-dot">
+                </span>
+
+            </div>
+
+            <div class="dashboard-card-content">
+
+                <span class="dashboard-card-label">
+                    EVALUACIONES
+                </span>
+
+                <h3>
+                    Exámenes disponibles
+                </h3>
+
+                <p>
+                    Aquí aparecerán las evaluaciones disponibles
+                    para que puedas realizarlas dentro del período establecido.
+                </p>
+
+            </div>
+
+            <div class="dashboard-card-footer">
+
+                <span class="dashboard-status-text">
                     Sin evaluaciones pendientes
                 </span>
 
             </div>
 
-        </div>
+        </article>
 
 
-        <div class="col-md-6 col-xl-4 reveal reveal-delay-3">
+        <!-- RESULTADOS -->
 
-            <div class="examsecure-card h-100 p-4">
+        <article class="examsecure-card dashboard-card dashboard-card-static reveal reveal-delay-3">
 
-                <div class="examsecure-card-icon">
-                    ↗
+            <div class="dashboard-card-top">
+
+                <div class="dashboard-icon dashboard-icon-success">
+
+                    <svg viewBox="0 0 24 24"
+                         aria-hidden="true">
+                        <path d="M4 19V5" />
+                        <path d="M4 19h17" />
+                        <path d="m7 15 4-4 3 2 5-6" />
+                    </svg>
+
                 </div>
 
-                <h4 class="text-white fw-bold">
-                    Mis resultados
-                </h4>
+                <span class="dashboard-status-dot">
+                </span>
 
-                <p class="text-secondary">
-                    Consulta tus calificaciones después de completar
-                    tus evaluaciones.
+            </div>
+
+            <div class="dashboard-card-content">
+
+                <span class="dashboard-card-label">
+                    HISTORIAL ACADÉMICO
+                </span>
+
+                <h3>
+                    Mis resultados
+                </h3>
+
+                <p>
+                    Consulta tus calificaciones y el historial
+                    de evaluaciones que hayas completado.
                 </p>
 
-                <span class="examsecure-badge examsecure-badge-neutral">
+            </div>
+
+            <div class="dashboard-card-footer">
+
+                <span class="dashboard-status-text">
                     Historial académico
                 </span>
 
             </div>
 
-        </div>
+        </article>
 
     </section>
 

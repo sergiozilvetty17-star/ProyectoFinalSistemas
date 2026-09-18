@@ -401,32 +401,51 @@
 
         });
 
-        let segundosRestantes =
-            @duracionMinutos * 60;
+                // El contador utiliza la hora real de inicio del intento.
+        const fechaInicioExamen =
+            new Date("@Model.FechaInicio.ToUniversalTime().ToString("O")").getTime();
+
+        const duracionExamenMilisegundos =
+            @duracionMinutos * 60 * 1000;
+
+        const fechaFinExamen =
+            fechaInicioExamen + duracionExamenMilisegundos;
 
         let examenFinalizadoAutomaticamente = false;
 
         function actualizarTemporizador() {
 
-            const minutos =
-                Math.floor(segundosRestantes / 60);
+            const ahora =
+                Date.now();
 
-            const segundos =
-                segundosRestantes % 60;
+            const milisegundosRestantes =
+                fechaFinExamen - ahora;
 
-            timerElement.textContent =
-                `${String(minutos).padStart(2, "0")}:${String(segundos).padStart(2, "0")}`;
+            if (milisegundosRestantes <= 0) {
 
-            if (segundosRestantes <= 0) {
+                timerElement.textContent = "00:00";
 
-                examenFinalizadoAutomaticamente = true;
+                if (!examenFinalizadoAutomaticamente) {
 
-                document.getElementById("examForm").submit();
+                    examenFinalizadoAutomaticamente = true;
+
+                    document.getElementById("examForm").submit();
+                }
 
                 return;
             }
 
-            segundosRestantes--;
+            const segundosTotales =
+                Math.floor(milisegundosRestantes / 1000);
+
+            const minutos =
+                Math.floor(segundosTotales / 60);
+
+            const segundos =
+                segundosTotales % 60;
+
+            timerElement.textContent =
+                `${String(minutos).padStart(2, "0")}:${String(segundos).padStart(2, "0")}`;
         }
 
         mostrarPregunta(0);
@@ -435,8 +454,8 @@
 
         setInterval(
             actualizarTemporizador,
-            1000
+            250
         );
-
-    </script>
+</script>
 }
+

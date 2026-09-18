@@ -2,186 +2,473 @@
 
 @{
     ViewData["Title"] = "Inscripciones";
+
+    var inscripciones = Model.ToList();
+    var activas = inscripciones.Count(i => i.Activa);
+    var inactivas = inscripciones.Count - activas;
 }
 
 <div class="page-shell">
 
-    <div class="page-hero">
+    <section class="page-hero">
+
         <div>
-            <span class="eyebrow">GESTIÓN ACADÉMICA</span>
-            <h1>Inscripciones</h1>
+
+            <div class="eyebrow">
+                <span class="eyebrow-dot"></span>
+                GESTIÓN ACADÉMICA
+            </div>
+
+            <h1>
+                Gestión de inscripciones
+            </h1>
+
             <p>
                 Administra la relación entre estudiantes y materias
                 dentro de ExamSecure.
             </p>
+
         </div>
 
-        <a asp-action="Create" class="btn btn-primary">
-            <span>＋</span>
-            Nueva inscripción
-        </a>
-    </div>
+        <div class="hero-actions">
 
-    <div class="glass-card">
+            <a asp-controller="Home"
+               asp-action="Index"
+               class="btn btn-outline-secondary">
 
-        <div class="section-header">
-            <div>
-                <h2>Registro de inscripciones</h2>
-                <p>
-                    @Model.Count() inscripción(es) registrada(s)
-                </p>
+                <svg class="button-icon"
+                     viewBox="0 0 24 24"
+                     aria-hidden="true">
+                    <path d="M3 11.5 12 4l9 7.5" />
+                    <path d="M5 10v10h14V10" />
+                    <path d="M9 20v-6h6v6" />
+                </svg>
+
+                Panel
+
+            </a>
+
+            <a asp-action="Create"
+               class="btn btn-primary">
+
+                <svg class="button-icon"
+                     viewBox="0 0 24 24"
+                     aria-hidden="true">
+                    <path d="M12 5v14" />
+                    <path d="M5 12h14" />
+                </svg>
+
+                Nueva inscripción
+
+            </a>
+
+        </div>
+
+    </section>
+
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="exam-toast success-toast mb-4">
+            <span class="toast-icon">✓</span>
+            <span>@TempData["Success"]</span>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="exam-toast error-toast mb-4">
+            <span class="toast-icon">!</span>
+            <span>@TempData["Error"]</span>
+        </div>
+    }
+
+
+    <section class="admin-summary-grid mb-4">
+
+        <div class="admin-summary-card">
+
+            <div class="admin-summary-icon primary">
+
+                <svg viewBox="0 0 24 24"
+                     aria-hidden="true">
+                    <path d="M4 5h16v14H4z" />
+                    <path d="M8 9h8" />
+                    <path d="M8 13h5" />
+                </svg>
+
             </div>
+
+            <div>
+                <span>Total inscripciones</span>
+                <strong>@inscripciones.Count</strong>
+            </div>
+
         </div>
 
-        @if (!Model.Any())
+
+        <div class="admin-summary-card">
+
+            <div class="admin-summary-icon success">
+
+                <svg viewBox="0 0 24 24"
+                     aria-hidden="true">
+                    <path d="m5 12 4 4L19 6" />
+                </svg>
+
+            </div>
+
+            <div>
+                <span>Inscripciones activas</span>
+                <strong>@activas</strong>
+            </div>
+
+        </div>
+
+
+        <div class="admin-summary-card">
+
+            <div class="admin-summary-icon cyan">
+
+                <svg viewBox="0 0 24 24"
+                     aria-hidden="true">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                </svg>
+
+            </div>
+
+            <div>
+                <span>Inscripciones inactivas</span>
+                <strong>@inactivas</strong>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="data-panel">
+
+        <div class="data-panel-header">
+
+            <div>
+
+                <span class="section-kicker">
+                    REGISTRO ACADÉMICO
+                </span>
+
+                <h2>
+                    Inscripciones registradas
+                </h2>
+
+                <p>
+                    Consulta estudiantes, materias, docentes y estado
+                    de cada inscripción.
+                </p>
+
+            </div>
+
+            <span class="record-count">
+                @inscripciones.Count registros
+            </span>
+
+        </div>
+
+
+        @if (!inscripciones.Any())
         {
             <div class="empty-state">
-                <div class="empty-state-icon">◎</div>
 
-                <h3>No existen inscripciones</h3>
+                <div class="empty-state-icon">
+
+                    <svg viewBox="0 0 24 24"
+                         aria-hidden="true">
+                        <path d="M4 5h16v14H4z" />
+                        <path d="M8 9h8" />
+                        <path d="M8 13h5" />
+                    </svg>
+
+                </div>
+
+                <h3>
+                    No existen inscripciones
+                </h3>
 
                 <p>
-                    Comienza registrando un estudiante en una materia.
+                    Comienza vinculando un estudiante con una materia.
                 </p>
 
-                <a asp-action="Create" class="btn btn-primary">
+                <a asp-action="Create"
+                   class="btn btn-primary">
+
+                    <svg class="button-icon"
+                         viewBox="0 0 24 24"
+                         aria-hidden="true">
+                        <path d="M12 5v14" />
+                        <path d="M5 12h14" />
+                    </svg>
+
                     Registrar primera inscripción
+
                 </a>
+
             </div>
         }
         else
         {
             <div class="table-responsive">
-                <table class="table examsecure-table">
+
+                <table class="table examsecure-table align-middle mb-0">
+
                     <thead>
                         <tr>
-                            <th>Estudiante</th>
+                            <th class="ps-4">Estudiante</th>
                             <th>Carrera</th>
                             <th>Materia</th>
                             <th>Docente</th>
                             <th>Fecha</th>
                             <th>Estado</th>
-                            <th class="text-end">Acciones</th>
+                            <th class="text-end pe-4">Acciones</th>
                         </tr>
                     </thead>
 
                     <tbody>
-                        @foreach (var inscripcion in Model)
-                        {
-                            var estudiante = inscripcion.Estudiante;
-                            var usuario = estudiante?.Usuario;
-                            var materia = inscripcion.Materia;
-                            var docente = materia?.Docente?.Usuario;
 
-                            <tr>
-                                <td>
-                                    <div class="table-user">
-                                        <div class="user-avatar">
-                                            @(usuario?.Nombres?.FirstOrDefault().ToString().ToUpper() ?? "?")
+                    @foreach (var inscripcion in inscripciones)
+                    {
+                        var estudiante = inscripcion.Estudiante;
+                        var usuario = estudiante?.Usuario;
+                        var materia = inscripcion.Materia;
+                        var docente = materia?.Docente?.Usuario;
+
+                        var nombreEstudiante =
+                            usuario?.NombreCompleto ?? "Sin usuario";
+
+                        var inicial =
+                            !string.IsNullOrWhiteSpace(usuario?.Nombres)
+                                ? usuario!.Nombres!.Substring(0, 1).ToUpper()
+                                : "E";
+
+                        <tr>
+
+                            <td class="ps-4">
+
+                                <div class="table-user">
+
+                                    <div class="table-user-avatar">
+                                        @inicial
+                                    </div>
+
+                                    <div>
+
+                                        <strong>
+                                            @nombreEstudiante
+                                        </strong>
+
+                                        <small>
+                                            CI:
+                                            @(usuario?.CedulaIdentidad ?? "Sin CI")
+                                        </small>
+
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+
+                            <td>
+
+                                <span class="table-secondary-text">
+                                    @(estudiante?.Carrera?.Nombre ?? "Sin carrera")
+                                </span>
+
+                            </td>
+
+
+                            <td>
+
+                                <div class="table-subject">
+
+                                    <strong>
+                                        @(materia?.Nombre ?? "Sin materia")
+                                    </strong>
+
+                                    @if (!string.IsNullOrWhiteSpace(materia?.Codigo))
+                                    {
+                                        <small>
+                                            @materia.Codigo
+                                        </small>
+                                    }
+
+                                </div>
+
+                            </td>
+
+
+                            <td>
+
+                                @if (docente != null)
+                                {
+                                    <div class="table-user compact">
+
+                                        <div class="table-user-avatar">
+                                            @{
+                                                var inicialDocente =
+                                                    !string.IsNullOrWhiteSpace(docente.Nombres)
+                                                        ? docente.Nombres!.Substring(0, 1).ToUpper()
+                                                        : "D";
+                                            }
+
+                                            @inicialDocente
                                         </div>
 
                                         <div>
                                             <strong>
-                                                @(usuario?.NombreCompleto ?? "Sin usuario")
+                                                @docente.NombreCompleto
                                             </strong>
 
                                             <small>
-                                                CI:
-                                                @(usuario?.CedulaIdentidad ?? "Sin CI")
+                                                Docente
                                             </small>
                                         </div>
-                                    </div>
-                                </td>
 
-                                <td>
-                                    <span>
-                                        @(estudiante?.Carrera?.Nombre ?? "Sin carrera")
+                                    </div>
+                                }
+                                else
+                                {
+                                    <span class="status-badge status-neutral">
+                                        Sin docente
                                     </span>
-                                </td>
+                                }
 
-                                <td>
-                                    <div>
-                                        <strong>
-                                            @(materia?.Nombre ?? "Sin materia")
-                                        </strong>
+                            </td>
 
-                                        <small>
-                                            @(materia?.Codigo ?? "")
-                                        </small>
-                                    </div>
-                                </td>
 
-                                <td>
-                                    @(docente?.NombreCompleto ?? "Sin docente")
-                                </td>
+                            <td>
 
-                                <td>
+                                <span class="table-date">
                                     @inscripcion.FechaInscripcion
                                         .ToLocalTime()
                                         .ToString("dd/MM/yyyy")
-                                </td>
+                                </span>
 
-                                <td>
-                                    @if (inscripcion.Activa)
-                                    {
-                                        <span class="status-badge status-success">
-                                            Activa
-                                        </span>
-                                    }
-                                    else
-                                    {
-                                        <span class="status-badge status-danger">
-                                            Inactiva
-                                        </span>
-                                    }
-                                </td>
+                            </td>
 
-                                <td class="text-end">
-                                    <div class="action-group">
 
-                                        <form asp-action="ToggleEstado"
-                                              method="post"
-                                              class="inline-form">
+                            <td>
 
-                                            @Html.AntiForgeryToken()
+                                @if (inscripcion.Activa)
+                                {
+                                    <span class="status-badge status-success">
+                                        <span class="status-badge-dot"></span>
+                                        Activa
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="status-badge status-danger">
+                                        <span class="status-badge-dot"></span>
+                                        Inactiva
+                                    </span>
+                                }
 
-                                            <input type="hidden"
-                                                   name="id"
-                                                   value="@inscripcion.Id" />
+                            </td>
 
+
+                            <td class="text-end pe-4">
+
+                                <div class="action-group justify-content-end">
+
+                                    <form asp-action="ToggleEstado"
+                                          method="post"
+                                          class="inline-form">
+
+                                        @Html.AntiForgeryToken()
+
+                                        <input type="hidden"
+                                               name="id"
+                                               value="@inscripcion.Id" />
+
+                                        @if (inscripcion.Activa)
+                                        {
                                             <button type="submit"
-                                                    class="btn btn-sm @(inscripcion.Activa ? "btn-warning" : "btn-success")"
-                                                    title="@(inscripcion.Activa ? "Desactivar" : "Activar")">
+                                                    class="table-action table-action-danger">
 
-                                                @(inscripcion.Activa ? "Desactivar" : "Activar")
+                                                <svg viewBox="0 0 24 24"
+                                                     aria-hidden="true">
+                                                    <path d="M18 6 6 18" />
+                                                    <path d="m6 6 12 12" />
+                                                </svg>
+
+                                                Desactivar
+
                                             </button>
-                                        </form>
-
-                                        <form asp-action="Delete"
-                                              method="post"
-                                              class="inline-form"
-                                              onsubmit="return confirm('¿Eliminar definitivamente esta inscripción?');">
-
-                                            @Html.AntiForgeryToken()
-
-                                            <input type="hidden"
-                                                   name="id"
-                                                   value="@inscripcion.Id" />
-
+                                        }
+                                        else
+                                        {
                                             <button type="submit"
-                                                    class="btn btn-sm btn-danger">
-                                                Eliminar
-                                            </button>
-                                        </form>
+                                                    class="table-action table-action-success">
 
-                                    </div>
-                                </td>
-                            </tr>
-                        }
+                                                <svg viewBox="0 0 24 24"
+                                                     aria-hidden="true">
+                                                    <path d="m5 12 4 4L19 6" />
+                                                </svg>
+
+                                                Activar
+
+                                            </button>
+                                        }
+
+                                    </form>
+
+
+                                    <form asp-action="Delete"
+                                          method="post"
+                                          class="inline-form"
+                                          onsubmit="return confirm('¿Eliminar definitivamente esta inscripción?');">
+
+                                        @Html.AntiForgeryToken()
+
+                                        <input type="hidden"
+                                               name="id"
+                                               value="@inscripcion.Id" />
+
+                                        <button type="submit"
+                                                class="table-action table-action-danger">
+
+                                            <svg viewBox="0 0 24 24"
+                                                 aria-hidden="true">
+                                                <path d="M4 7h16" />
+                                                <path d="M10 11v6" />
+                                                <path d="M14 11v6" />
+                                                <path d="M6 7l1 13h10l1-13" />
+                                                <path d="M9 7V4h6v3" />
+                                            </svg>
+
+                                            Eliminar
+
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+                    }
+
                     </tbody>
+
                 </table>
+
             </div>
         }
 
-    </div>
+    </section>
+
 </div>
