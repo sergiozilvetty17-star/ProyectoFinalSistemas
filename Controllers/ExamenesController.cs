@@ -62,13 +62,15 @@ namespace EcommerceApp.Controllers
                     "La fecha de finalización debe ser posterior a la fecha de inicio.");
             }
 
+            model.DocenteId = usuarioId;
+            ModelState.Remove(nameof(Examen.DocenteId));
+
             if (!ModelState.IsValid)
             {
                 await CargarMaterias();
                 return View(model);
             }
 
-            model.DocenteId = usuarioId;
             model.Titulo = model.Titulo.Trim();
 
             if (!string.IsNullOrWhiteSpace(model.Descripcion))
@@ -143,6 +145,8 @@ namespace EcommerceApp.Controllers
                     "FechaFin",
                     "La fecha de finalización debe ser posterior a la fecha de inicio.");
             }
+
+            ModelState.Remove(nameof(Examen.DocenteId));
 
             if (!ModelState.IsValid)
             {
@@ -279,3 +283,4 @@ namespace EcommerceApp.Controllers
         }
     }
 }
+

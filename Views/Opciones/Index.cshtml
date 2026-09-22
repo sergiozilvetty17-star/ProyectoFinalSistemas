@@ -1,0 +1,300 @@
+﻿@model IEnumerable<EcommerceApp.Models.Opcion>
+
+@{
+    ViewData["Title"] = "Opciones";
+
+    var pregunta = ViewBag.Pregunta as EcommerceApp.Models.Pregunta;
+    var examen = pregunta?.Examen;
+    var opciones = Model
+        .OrderBy(o => o.Orden)
+        .ThenBy(o => o.Id)
+        .ToList();
+}
+
+<div class="page-shell">
+
+    <div class="page-hero">
+        <div>
+            <span class="eyebrow">
+                <span class="eyebrow-dot"></span>
+                CONSTRUCTOR DE EXAMEN
+            </span>
+
+            <h1>Opciones de respuesta</h1>
+
+            <p>
+                @(examen?.Titulo ?? "Examen")
+                <span class="hero-separator">/</span>
+                @(examen?.Materia?.Nombre ?? "Materia")
+            </p>
+        </div>
+
+        <div class="hero-actions">
+
+            <a asp-controller="Preguntas"
+               asp-action="Index"
+               asp-route-examenId="@pregunta?.ExamenId"
+               class="btn btn-secondary">
+
+                <span class="button-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M19 12H5M11 18l-6-6 6-6" />
+                    </svg>
+                </span>
+
+                Volver a preguntas
+            </a>
+
+            @if (pregunta?.Tipo != EcommerceApp.Models.TipoPregunta.RespuestaAbierta)
+            {
+                <a asp-action="Create"
+                   asp-route-preguntaId="@pregunta?.Id"
+                   class="btn btn-primary">
+
+                    <span class="button-icon">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12 5v14M5 12h14" />
+                        </svg>
+                    </span>
+
+                    Agregar opción
+                </a>
+            }
+
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="examsecure-alert success">
+            <span class="alert-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="m5 12 4 4L19 6" />
+                </svg>
+            </span>
+
+            <span>@TempData["Success"]</span>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="examsecure-alert danger">
+            <span class="alert-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 8v5M12 16h.01" />
+                    <circle cx="12" cy="12" r="9" />
+                </svg>
+            </span>
+
+            <span>@TempData["Error"]</span>
+        </div>
+    }
+
+    <div class="question-preview-panel">
+
+        <div class="question-preview-header">
+
+            <div class="question-preview-number">
+                @pregunta?.Orden.ToString("00")
+            </div>
+
+            <div class="question-preview-content">
+
+                <span class="section-kicker">
+                    PREGUNTA
+                </span>
+
+                <h2>
+                    @(pregunta?.Enunciado ?? "Pregunta")
+                </h2>
+
+                <div class="question-preview-meta">
+
+                    <span class="status-badge status-info">
+                        <span class="status-badge-dot"></span>
+                        @(pregunta?.Tipo.ToString() ?? "Tipo")
+                    </span>
+
+                    <span class="duration-badge">
+                        @(pregunta?.Puntaje ?? 0) pts.
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="data-panel">
+
+        <div class="data-panel-header">
+
+            <div>
+                <span class="section-kicker">
+                    RESPUESTAS
+                </span>
+
+                <h2>Opciones disponibles</h2>
+
+                <p>
+                    Configura las alternativas que verá el estudiante.
+                </p>
+            </div>
+
+            <span class="record-count">
+                @opciones.Count
+                @(opciones.Count == 1 ? "opción" : "opciones")
+            </span>
+
+        </div>
+
+        @if (!opciones.Any())
+        {
+            <div class="empty-state">
+
+                <div class="empty-state-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M6 4.5h12A1.5 1.5 0 0 1 19.5 6v12a1.5 1.5 0 0 1-1.5 1.5H6A1.5 1.5 0 0 1 4.5 18V6A1.5 1.5 0 0 1 6 4.5Z" />
+                        <path d="M8 9h8M8 13h5" />
+                    </svg>
+                </div>
+
+                <h3>No hay opciones todavía</h3>
+
+                <p>
+                    Agrega las alternativas que podrá seleccionar el estudiante.
+                </p>
+
+                @if (pregunta?.Tipo != EcommerceApp.Models.TipoPregunta.RespuestaAbierta)
+                {
+                    <a asp-action="Create"
+                       asp-route-preguntaId="@pregunta?.Id"
+                       class="btn btn-primary">
+
+                        Agregar primera opción
+                    </a>
+                }
+
+            </div>
+        }
+        else
+        {
+            <div class="option-list">
+
+                @for (var i = 0; i < opciones.Count; i++)
+                {
+                    var opcion = opciones[i];
+                    var letra = Convert.ToChar(65 + i);
+
+                    <div class="option-management-card
+                                @(opcion.EsCorrecta ? "option-correct" : "")">
+
+                        <div class="option-letter">
+                            @letra
+                        </div>
+
+                        <div class="option-main">
+
+                            <div class="option-text">
+                                @opcion.Texto
+                            </div>
+
+                            @if (opcion.EsCorrecta)
+                            {
+                                <span class="status-badge status-success">
+                                    <span class="status-badge-dot"></span>
+                                    Respuesta correcta
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="status-badge status-neutral">
+                                    <span class="status-badge-dot"></span>
+                                    Incorrecta
+                                </span>
+                            }
+
+                        </div>
+
+                        <div class="action-group">
+
+                            @if (!opcion.EsCorrecta)
+                            {
+                                <form asp-action="MarcarCorrecta"
+                                      method="post"
+                                      class="inline-form">
+
+                                    @Html.AntiForgeryToken()
+
+                                    <input type="hidden"
+                                           name="id"
+                                           value="@opcion.Id" />
+
+                                    <button type="submit"
+                                            class="table-action table-action-success">
+
+                                        <span class="button-icon">
+                                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                                <path d="m5 12 4 4L19 6" />
+                                            </svg>
+                                        </span>
+
+                                        Correcta
+                                    </button>
+
+                                </form>
+                            }
+
+                            <a asp-action="Edit"
+                               asp-route-id="@opcion.Id"
+                               class="table-action table-action-primary">
+
+                                <span class="button-icon">
+                                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                                        <path d="m4 16 9-9 4 4-9 9H4v-4Z" />
+                                        <path d="m13 7 2-2 4 4-2 2" />
+                                    </svg>
+                                </span>
+
+                                Editar
+                            </a>
+
+                            <form asp-action="Delete"
+                                  method="post"
+                                  class="inline-form"
+                                  onsubmit="return confirm('¿Eliminar esta opción?');">
+
+                                @Html.AntiForgeryToken()
+
+                                <input type="hidden"
+                                       name="id"
+                                       value="@opcion.Id" />
+
+                                <button type="submit"
+                                        class="table-action table-action-danger">
+
+                                    <span class="button-icon">
+                                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                                            <path d="M5 7h14M10 11v6M14 11v6M9 7V4h6v3M7 7l1 13h8l1-13" />
+                                        </svg>
+                                    </span>
+
+                                    Eliminar
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+        }
+
+    </div>
+
+</div>

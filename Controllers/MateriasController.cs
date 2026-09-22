@@ -1,4 +1,4 @@
-ï»¿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using EcommerceApp.Data;
@@ -14,7 +14,8 @@ namespace EcommerceApp.Controllers
         public async Task<IActionResult> Index()
         {
             var materias = await context.Materias
-                .Include(m => m.Docente)
+                .Include(m => m.Docente!)
+                .ThenInclude(d => d.Usuario)
                 .OrderBy(m => m.Nombre)
                 .ToListAsync();
 
@@ -37,7 +38,7 @@ namespace EcommerceApp.Controllers
             {
                 ModelState.AddModelError(
                     "Codigo",
-                    "Ya existe una materia con ese cÃ³digo.");
+                    "Ya existe una materia con ese código.");
             }
 
             if (!ModelState.IsValid)
@@ -99,7 +100,7 @@ namespace EcommerceApp.Controllers
             {
                 ModelState.AddModelError(
                     "Codigo",
-                    "Ya existe otra materia con ese cÃ³digo.");
+                    "Ya existe otra materia con ese código.");
             }
 
             if (!ModelState.IsValid)
@@ -169,3 +170,5 @@ namespace EcommerceApp.Controllers
         }
     }
 }
+
+

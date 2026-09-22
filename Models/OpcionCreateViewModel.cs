@@ -12,10 +12,10 @@ namespace EcommerceApp.Models
         [Display(Name = "Texto de la opción")]
         public string Texto { get; set; } = string.Empty;
 
-        [Display(Name = "Respuesta correcta")]
+        [Display(Name = "Es correcta")]
         public bool EsCorrecta { get; set; }
 
-        [Range(1, 100)]
+        [Range(1, 10000)]
         [Display(Name = "Orden")]
         public int Orden { get; set; } = 1;
     }

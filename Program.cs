@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using EcommerceApp.Data;
 using EcommerceApp.Models;
+using EcommerceApp.Data.Seed;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -222,5 +223,23 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+if (args.Contains("--seed-demo"))
+{
+    using var demoScope = app.Services.CreateScope();
+
+    var demoContext =
+        demoScope.ServiceProvider
+            .GetRequiredService<ApplicationDbContext>();
+
+    var demoUserManager =
+        demoScope.ServiceProvider
+            .GetRequiredService<UserManager<ApplicationUser>>();
+
+    await DemoDataSeeder.SeedAsync(
+        demoContext,
+        demoUserManager);
+}
 app.Run();
+
+
 
