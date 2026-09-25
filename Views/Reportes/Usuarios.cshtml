@@ -1,0 +1,222 @@
+﻿@model EcommerceApp.Models.Reportes.ReporteUsuariosViewModel
+
+@{
+    ViewData["Title"] = "Reporte de usuarios";
+}
+
+<div class="page-shell reports-page">
+
+    <div class="page-hero">
+        <div>
+            <div class="eyebrow">
+                <span class="eyebrow-dot"></span>
+                Administración
+            </div>
+
+            <h1>Usuarios y auditoría</h1>
+
+            <p>
+                Historial de cuentas, roles, estados y responsables de creación.
+            </p>
+        </div>
+
+        <div class="hero-actions">
+            <a asp-action="UsuariosPdf" class="btn btn-secondary">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M6 2h9l5 5v15H6z" />
+                    <path d="M14 2v6h6" />
+                    <path d="M9 13h6" />
+                    <path d="M9 17h6" />
+                </svg>
+                PDF
+            </a>
+
+            <a asp-action="UsuariosExcel" class="btn btn-primary">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M4 4h16v16H4z" />
+                    <path d="m8 8 8 8" />
+                    <path d="m16 8-8 8" />
+                </svg>
+                Excel
+            </a>
+        </div>
+    </div>
+
+    <div class="admin-summary-grid reports-summary">
+
+        <div class="admin-summary-card">
+            <div class="admin-summary-icon primary">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                </svg>
+            </div>
+
+            <div>
+                <span>Total usuarios</span>
+                <strong>@Model.TotalUsuarios</strong>
+            </div>
+        </div>
+
+        <div class="admin-summary-card">
+            <div class="admin-summary-icon cyan">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="8" r="4" />
+                    <path d="M5 21a7 7 0 0 1 14 0" />
+                </svg>
+            </div>
+
+            <div>
+                <span>Estudiantes</span>
+                <strong>@Model.TotalEstudiantes</strong>
+            </div>
+        </div>
+
+        <div class="admin-summary-card">
+            <div class="admin-summary-icon success">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="8" r="4" />
+                    <path d="M5 21a7 7 0 0 1 14 0" />
+                </svg>
+            </div>
+
+            <div>
+                <span>Docentes</span>
+                <strong>@Model.TotalDocentes</strong>
+            </div>
+        </div>
+
+        <div class="admin-summary-card">
+            <div class="admin-summary-icon warning">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 3 4 7v5c0 5 3.5 8 8 9 4.5-1 8-4 8-9V7l-8-4Z" />
+                </svg>
+            </div>
+
+            <div>
+                <span>Administradores</span>
+                <strong>@Model.TotalAdministradores</strong>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="data-panel">
+
+        <div class="data-panel-header">
+            <div>
+                <span class="section-kicker">Auditoría</span>
+                <h2>Historial de cuentas</h2>
+            </div>
+
+            <span class="record-count">
+                @Model.Usuarios.Count registros
+            </span>
+        </div>
+
+        @if (Model.Usuarios.Any())
+        {
+            <div class="table-responsive">
+                <table class="examsecure-table report-table">
+                    <thead>
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Rol</th>
+                            <th>Estado</th>
+                            <th>Fecha de creación</th>
+                            <th>Creado por</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var usuario in Model.Usuarios)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="table-user">
+                                        <div class="table-user-avatar">
+                                            @usuario.NombreCompleto
+                                                .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                                                .Take(2)
+                                                .Select(x => x[0])
+                                                .Aggregate("", (a, b) => a + b)
+                                                .ToUpper()
+                                        </div>
+
+                                        <div>
+                                            <strong>@usuario.NombreCompleto</strong>
+                                            <span class="table-email">
+                                                @usuario.Email
+                                            </span>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <span class="status-badge status-primary">
+                                        <span class="status-badge-dot"></span>
+                                        @usuario.Rol
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="status-badge @(usuario.Estado == "Activo"
+                                        ? "status-success"
+                                        : "status-danger")">
+                                        <span class="status-badge-dot"></span>
+                                        @usuario.Estado
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="table-date">
+                                        @usuario.FechaCreacion
+                                            .ToLocalTime()
+                                            .ToString("dd/MM/yyyy HH:mm")
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <div class="table-user compact">
+                                        <div>
+                                            <strong>@usuario.CreadoPor</strong>
+
+                                            @if (!string.IsNullOrWhiteSpace(usuario.CreadoPorEmail))
+                                            {
+                                                <span class="table-email">
+                                                    @usuario.CreadoPorEmail
+                                                </span>
+                                            }
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <div class="empty-state-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M3 21a6 6 0 0 1 12 0" />
+                    </svg>
+                </div>
+
+                <h3>No hay usuarios</h3>
+                <p>No existen registros para mostrar.</p>
+            </div>
+        }
+
+    </div>
+
+    <div class="report-back">
+        <a asp-action="Index" class="btn btn-secondary">
+            Volver a reportes
+        </a>
+    </div>
+
+</div>

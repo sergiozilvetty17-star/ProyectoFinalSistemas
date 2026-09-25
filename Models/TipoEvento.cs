@@ -1,4 +1,4 @@
-namespace EcommerceApp.Models
+﻿namespace EcommerceApp.Models
 {
     public enum TipoEvento
     {
@@ -11,6 +11,7 @@ namespace EcommerceApp.Models
         FinalizacionExamen,
         IntentoSalirPantalla,
         PerdidaConexion,
-        ActividadSospechosa
+        ActividadSospechosa,
+        CuentaCreada
     }
 }

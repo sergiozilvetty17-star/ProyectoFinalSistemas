@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
+Ôªøusing Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -86,6 +86,8 @@ namespace EcommerceApp.Controllers
                 return View(model);
             }
 
+            var administradorId = userManager.GetUserId(User);
+
             var usuario = new ApplicationUser
             {
                 UserName = model.Email,
@@ -102,7 +104,8 @@ namespace EcommerceApp.Controllers
                         ? null
                         : model.Telefono.Trim(),
                 EmailConfirmed = true,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                CreatedByUserId = administradorId
             };
 
             var resultado = await userManager.CreateAsync(
@@ -167,6 +170,21 @@ namespace EcommerceApp.Controllers
 
             await context.SaveChangesAsync();
 
+            context.EventosSeguridad.Add(new EventoSeguridad
+            {
+                ApplicationUserId = administradorId ?? string.Empty,
+                Tipo = TipoEvento.CuentaCreada,
+                Descripcion =
+                    $"Cuenta creada para {usuario.NombreCompleto}. " +
+                    $"Rol asignado: {model.Rol}. " +
+                    $"Usuario creado: {usuario.Id}.",
+                FechaHora = DateTime.UtcNow,
+                DireccionIP =
+                    HttpContext.Connection.RemoteIpAddress?.ToString()
+            });
+
+            await context.SaveChangesAsync();
+
             TempData["Success"] =
                 $"Usuario {usuario.NombreCompleto} creado correctamente.";
 
@@ -198,7 +216,7 @@ namespace EcommerceApp.Controllers
             if (rol == "Administrador")
             {
                 TempData["Error"] =
-                    "Los datos del administrador no se pueden editar desde este mÛdulo.";
+                    "Los datos del administrador no se pueden editar desde este m√≥dulo.";
 
                 return RedirectToAction(nameof(Index));
             }
@@ -548,7 +566,7 @@ namespace EcommerceApp.Controllers
             {
                 ModelState.AddModelError(
                     "Rol",
-                    "Seleccione un rol v·lido.");
+                    "Seleccione un rol v√°lido.");
 
                 return;
             }
@@ -580,3 +598,5 @@ namespace EcommerceApp.Controllers
         }
     }
 }
+
+

@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 
 namespace EcommerceApp.Models
@@ -23,6 +23,13 @@ namespace EcommerceApp.Models
         public string? Telefono { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public string? CreatedByUserId { get; set; }
+
+        public ApplicationUser? CreatedByUser { get; set; }
+
+        public ICollection<ApplicationUser> CreatedUsers { get; set; }
+            = new List<ApplicationUser>();
 
         public string NombreCompleto =>
             string.Join(

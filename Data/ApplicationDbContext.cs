@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using EcommerceApp.Models;
 
@@ -37,6 +37,11 @@ namespace EcommerceApp.Data
             builder.Entity<ApplicationUser>()
                 .HasIndex(u => u.Email)
                 .IsUnique();
+            builder.Entity<ApplicationUser>()
+                .HasOne(u => u.CreatedByUser)
+                .WithMany(u => u.CreatedUsers)
+                .HasForeignKey(u => u.CreatedByUserId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<Estudiante>()
                 .HasIndex(e => e.ApplicationUserId)
@@ -199,3 +204,4 @@ namespace EcommerceApp.Data
         }
     }
 }
+

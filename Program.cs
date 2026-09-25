@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.HttpOverrides;
+﻿using QuestPDF.Infrastructure;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using EcommerceApp.Data;
 using EcommerceApp.Models;
 using EcommerceApp.Data.Seed;
+
+QuestPDF.Settings.License = LicenseType.Community;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -240,6 +243,7 @@ if (args.Contains("--seed-demo"))
         demoUserManager);
 }
 app.Run();
+
 
 
 

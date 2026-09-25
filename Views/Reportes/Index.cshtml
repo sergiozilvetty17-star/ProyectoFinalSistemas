@@ -1,0 +1,198 @@
+﻿@{
+    ViewData["Title"] = "Reportes";
+    var rol = ViewBag.Rol as string ?? "";
+}
+
+<div class="page-shell reports-page">
+
+    <div class="page-hero">
+        <div>
+            <div class="eyebrow">
+                <span class="eyebrow-dot"></span>
+                Centro de información
+            </div>
+
+            <h1>Reportes</h1>
+
+            <p>
+                Consulta información académica, administrativa y de seguridad
+                de ExamSecure.
+            </p>
+        </div>
+    </div>
+
+    @if (rol == "Administrador")
+    {
+        <div class="reports-section">
+            <div class="reports-section-header">
+                <div>
+                    <span class="section-kicker">Administración</span>
+                    <h2>Reportes administrativos</h2>
+                    <p>Información global de la plataforma.</p>
+                </div>
+            </div>
+
+            <div class="reports-grid">
+
+                <a asp-action="Usuarios" class="report-card">
+                    <div class="report-card-icon report-icon-primary">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                            <circle cx="9" cy="7" r="4" />
+                            <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                        </svg>
+                    </div>
+
+                    <div class="report-card-content">
+                        <h3>Usuarios y auditoría</h3>
+                        <p>
+                            Cuentas, roles, estados, fechas de creación
+                            y administrador responsable.
+                        </p>
+                    </div>
+
+                    <span class="report-card-arrow">→</span>
+                </a>
+
+                <a asp-action="Examenes" class="report-card">
+                    <div class="report-card-icon report-icon-cyan">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <rect x="4" y="3" width="16" height="18" rx="2" />
+                            <path d="M8 7h8" />
+                            <path d="M8 11h8" />
+                            <path d="M8 15h5" />
+                        </svg>
+                    </div>
+
+                    <div class="report-card-content">
+                        <h3>Exámenes</h3>
+                        <p>
+                            Estado, materias, docentes, preguntas,
+                            intentos y promedios.
+                        </p>
+                    </div>
+
+                    <span class="report-card-arrow">→</span>
+                </a>
+
+                <a asp-action="Rendimiento" class="report-card">
+                    <div class="report-card-icon report-icon-success">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M4 19V5" />
+                            <path d="M4 19h16" />
+                            <path d="m7 15 4-4 3 2 5-6" />
+                        </svg>
+                    </div>
+
+                    <div class="report-card-content">
+                        <h3>Rendimiento académico</h3>
+                        <p>
+                            Promedios, evaluaciones, aprobados,
+                            no aprobados y resultados.
+                        </p>
+                    </div>
+
+                    <span class="report-card-arrow">→</span>
+                </a>
+
+                <a asp-action="Seguridad" class="report-card">
+                    <div class="report-card-icon report-icon-warning">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12 3 4 7v5c0 5 3.5 8 8 9 4.5-1 8-4 8-9V7l-8-4Z" />
+                            <path d="M12 8v4" />
+                            <circle cx="12" cy="15.5" r=".7" />
+                        </svg>
+                    </div>
+
+                    <div class="report-card-content">
+                        <h3>Seguridad</h3>
+                        <p>
+                            Eventos, verificaciones faciales,
+                            actividad sospechosa y auditoría.
+                        </p>
+                    </div>
+
+                    <span class="report-card-arrow">→</span>
+                </a>
+
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="reports-section">
+            <div class="reports-section-header">
+                <div>
+                    <span class="section-kicker">Docencia</span>
+                    <h2>Mis reportes</h2>
+                    <p>Información correspondiente a tus materias y exámenes.</p>
+                </div>
+            </div>
+
+            <div class="reports-grid">
+
+                <a asp-action="MisExamenes" class="report-card">
+                    <div class="report-card-icon report-icon-primary">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <rect x="4" y="3" width="16" height="18" rx="2" />
+                            <path d="M8 7h8" />
+                            <path d="M8 11h8" />
+                            <path d="M8 15h5" />
+                        </svg>
+                    </div>
+
+                    <div class="report-card-content">
+                        <h3>Mis exámenes</h3>
+                        <p>
+                            Consulta el estado y estadísticas
+                            de tus exámenes.
+                        </p>
+                    </div>
+
+                    <span class="report-card-arrow">→</span>
+                </a>
+
+                <a asp-action="MiRendimiento" class="report-card">
+                    <div class="report-card-icon report-icon-success">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M4 19V5" />
+                            <path d="M4 19h16" />
+                            <path d="m7 15 4-4 3 2 5-6" />
+                        </svg>
+                    </div>
+
+                    <div class="report-card-content">
+                        <h3>Rendimiento</h3>
+                        <p>
+                            Resultados y promedios de tus estudiantes.
+                        </p>
+                    </div>
+
+                    <span class="report-card-arrow">→</span>
+                </a>
+
+                <a asp-action="MiSeguridad" class="report-card">
+                    <div class="report-card-icon report-icon-warning">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12 3 4 7v5c0 5 3.5 8 8 9 4.5-1 8-4 8-9V7l-8-4Z" />
+                            <path d="M12 8v4" />
+                            <circle cx="12" cy="15.5" r=".7" />
+                        </svg>
+                    </div>
+
+                    <div class="report-card-content">
+                        <h3>Seguridad</h3>
+                        <p>
+                            Eventos de seguridad de tus exámenes.
+                        </p>
+                    </div>
+
+                    <span class="report-card-arrow">→</span>
+                </a>
+
+            </div>
+        </div>
+    }
+
+</div>
