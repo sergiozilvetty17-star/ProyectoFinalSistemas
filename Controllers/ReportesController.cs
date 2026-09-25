@@ -502,19 +502,16 @@ namespace EcommerceApp.Controllers
                                         item.Rol,
                                         alternate);
 
-                                    var estadoCell = table.Cell();
-
-                                    estadoCell.Background(
-                                        alternate
-                                            ? PdfReportStyle.Background
-                                            : PdfReportStyle.White);
-
-                                    estadoCell.BorderBottom(1);
-                                    estadoCell.BorderColor(
-                                        PdfReportStyle.LightGray);
-                                    estadoCell.Padding(6);
-
-                                    estadoCell.Text(item.Estado)
+                                    table.Cell()
+                                        .Background(
+                                            alternate
+                                                ? PdfReportStyle.Background
+                                                : PdfReportStyle.White)
+                                        .BorderBottom(1)
+                                        .BorderColor(
+                                            PdfReportStyle.LightGray)
+                                        .Padding(6)
+                                        .Text(item.Estado)
                                         .FontSize(7.5f)
                                         .Bold()
                                         .FontColor(
@@ -686,6 +683,7 @@ namespace EcommerceApp.Controllers
         }
     }
 }
+
 
 
 

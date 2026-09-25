@@ -135,12 +135,13 @@
                                 <td>
                                     <div class="table-user">
                                         <div class="table-user-avatar">
-                                            @usuario.NombreCompleto
-                                                .Split(' ', StringSplitOptions.RemoveEmptyEntries)
-                                                .Take(2)
-                                                .Select(x => x[0])
-                                                .Aggregate("", (a, b) => a + b)
-                                                .ToUpper()
+                                            @(string.Join(
+                                                "",
+                                                usuario.NombreCompleto
+                                                    .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                                                    .Take(2)
+                                                    .Select(x => x[0])
+                                            ).ToUpper())
                                         </div>
 
                                         <div>
@@ -170,9 +171,9 @@
 
                                 <td>
                                     <span class="table-date">
-                                        @usuario.FechaCreacion
+                                        @(usuario.FechaCreacion
                                             .ToLocalTime()
-                                            .ToString("dd/MM/yyyy HH:mm")
+                                            .ToString("dd/MM/yyyy HH:mm"))
                                     </span>
                                 </td>
 
@@ -220,3 +221,4 @@
     </div>
 
 </div>
+
