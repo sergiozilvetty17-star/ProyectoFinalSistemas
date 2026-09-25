@@ -73,6 +73,77 @@ namespace EcommerceApp.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> MisMaterias()
+        {
+            var userId = _userManager.GetUserId(User);
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Challenge();
+            }
+
+            var estudiante = await _context.Estudiantes
+                .FirstOrDefaultAsync(e =>
+                    e.ApplicationUserId == userId);
+
+            if (estudiante == null)
+            {
+                return NotFound("No se encontró el perfil de estudiante.");
+            }
+
+            var materias = await _context.Inscripciones
+                .Include(i => i.Materia)
+                    .ThenInclude(m => m!.Docente)
+                        .ThenInclude(d => d!.Usuario)
+                .Where(i =>
+                    i.EstudianteId == estudiante.Id &&
+                    i.Activa &&
+                    i.Materia != null &&
+                    i.Materia.Activa)
+                .OrderBy(i => i.Materia!.Nombre)
+                .Select(i => i.Materia!)
+                .ToListAsync();
+
+            ViewBag.Materias = materias;
+
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Resultados()
+        {
+            var userId = _userManager.GetUserId(User);
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Challenge();
+            }
+
+            var estudiante = await _context.Estudiantes
+                .FirstOrDefaultAsync(e =>
+                    e.ApplicationUserId == userId);
+
+            if (estudiante == null)
+            {
+                return NotFound("No se encontró el perfil de estudiante.");
+            }
+
+            var resultados = await _context.IntentosExamen
+                .Include(i => i.Examen)
+                    .ThenInclude(e => e!.Materia)
+                .Where(i =>
+                    i.EstudianteId == estudiante.Id &&
+                    i.Finalizado &&
+                    !i.Anulado &&
+                    i.Calificacion.HasValue)
+                .OrderByDescending(i => i.FechaFin)
+                .ToListAsync();
+
+            ViewBag.Resultados = resultados;
+
+            return View();
+        }
+        [HttpGet]
         public async Task<IActionResult> IniciarExamen(int id)
         {
             var userId = _userManager.GetUserId(User);
@@ -810,6 +881,7 @@ namespace EcommerceApp.Controllers
         }
     }
 }
+
 
 
 

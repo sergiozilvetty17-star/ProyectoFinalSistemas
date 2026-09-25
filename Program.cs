@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using EcommerceApp.Data;
 using EcommerceApp.Models;
 using EcommerceApp.Data.Seed;
+using Google.Cloud.Speech.V2;
+using EcommerceApp.Services.Speech;
 
 QuestPDF.Settings.License = LicenseType.Community;
 
@@ -36,6 +38,9 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddSingleton<SpeechClient>(_ => SpeechClient.Create());
+builder.Services.AddScoped<GoogleSpeechService>();
 
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
@@ -243,6 +248,7 @@ if (args.Contains("--seed-demo"))
         demoUserManager);
 }
 app.Run();
+
 
 
 

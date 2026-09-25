@@ -4939,3 +4939,104 @@ textarea:focus {
     }
 }
 
+
+/* =========================================================
+   SPEECH TO TEXT
+   ========================================================= */
+
+.speech-field {
+    width: 100%;
+}
+
+.speech-field-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.speech-field-header .form-label {
+    margin-bottom: 0;
+}
+
+.speech-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 36px;
+    padding: 7px 13px;
+    border: 1px solid rgba(79, 124, 255, .35);
+    border-radius: 8px;
+    background: rgba(79, 124, 255, .08);
+    color: #8aa4ff;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition:
+        background .2s ease,
+        border-color .2s ease,
+        color .2s ease,
+        transform .15s ease;
+}
+
+.speech-button svg {
+    width: 17px;
+    height: 17px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.speech-button:hover {
+    background: rgba(79, 124, 255, .15);
+    border-color: rgba(79, 124, 255, .65);
+    color: #ffffff;
+}
+
+.speech-button:active {
+    transform: scale(.97);
+}
+
+.speech-button:focus-visible {
+    outline: 2px solid #8aa4ff;
+    outline-offset: 2px;
+}
+
+.speech-button.is-recording {
+    background: rgba(52, 211, 153, .12);
+    border-color: rgba(52, 211, 153, .55);
+    color: #34d399;
+}
+
+.speech-button.is-recording:hover {
+    background: rgba(52, 211, 153, .18);
+}
+
+.speech-status {
+    min-height: 18px;
+    margin-top: 6px;
+    color: #64748b;
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.speech-status-error {
+    color: #fb7185;
+}
+
+@media (max-width: 575px) {
+
+    .speech-field-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .speech-button {
+        width: 100%;
+    }
+}
+

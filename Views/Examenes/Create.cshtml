@@ -219,17 +219,45 @@
                         </div>
 
 
-                        <div>
+                        <div class="speech-field">
 
-                            <label asp-for="Descripcion"
-                                   class="form-label">
-                                Descripción
-                            </label>
+                            <div class="speech-field-header">
+
+                                <label asp-for="Descripcion"
+                                       class="form-label">
+                                    Descripción
+                                </label>
+
+                                <button type="button"
+                                        class="speech-button"
+                                        data-speech-target="Descripcion"
+                                        aria-label="Dictar descripción del examen">
+
+                                    <svg viewBox="0 0 24 24"
+                                         aria-hidden="true">
+                                        <path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3Z" />
+                                        <path d="M19 11a7 7 0 0 1-14 0" />
+                                        <path d="M12 18v3" />
+                                        <path d="M8 21h8" />
+                                    </svg>
+
+                                    <span class="speech-button-text">
+                                        Dictar
+                                    </span>
+
+                                </button>
+
+                            </div>
 
                             <textarea asp-for="Descripcion"
                                       class="form-control"
                                       rows="5"
                                       placeholder="Escribe las instrucciones del examen..."></textarea>
+
+                            <div class="speech-status"
+                                 data-speech-status-for="Descripcion"
+                                 aria-live="polite">
+                            </div>
 
                             <span asp-validation-for="Descripcion"
                                   class="field-validation">
@@ -448,4 +476,8 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <script src="~/js/speech/examsecure-speech.js"
+            asp-append-version="true"></script>
 }
+

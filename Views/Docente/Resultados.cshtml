@@ -1,0 +1,168 @@
+﻿@using EcommerceApp.Models
+
+@{
+    ViewData["Title"] = "Resultados";
+
+    var resultados =
+        ViewBag.Resultados as List<IntentoExamen>
+        ?? new List<IntentoExamen>();
+}
+
+<div class="page-shell">
+
+    <section class="page-hero">
+
+        <div>
+
+            <div class="eyebrow">
+                <span class="eyebrow-dot"></span>
+                ESPACIO DOCENTE
+            </div>
+
+            <h1>
+                Resultados
+            </h1>
+
+            <p>
+                Consulta las calificaciones obtenidas por tus estudiantes.
+            </p>
+
+        </div>
+
+        <div class="hero-actions">
+
+            <a asp-controller="Home"
+               asp-action="Docente"
+               class="btn btn-outline-secondary">
+
+                <svg class="button-icon"
+                     viewBox="0 0 24 24"
+                     aria-hidden="true">
+                    <path d="M19 12H5" />
+                    <path d="m12 19-7-7 7-7" />
+                </svg>
+
+                Volver
+
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <section class="data-panel">
+
+        <div class="data-panel-header">
+
+            <div>
+
+                <span class="section-kicker">
+                    EVALUACIONES
+                </span>
+
+                <h2>
+                    Resultados de estudiantes
+                </h2>
+
+                <p>
+                    Evaluaciones finalizadas de tus exámenes.
+                </p>
+
+            </div>
+
+            <span class="record-count">
+                @resultados.Count
+                @(resultados.Count == 1 ? "resultado" : "resultados")
+            </span>
+
+        </div>
+
+
+        @if (!resultados.Any())
+        {
+            <div class="empty-state">
+
+                <h3>
+                    No hay resultados disponibles
+                </h3>
+
+                <p>
+                    Los resultados aparecerán cuando tus estudiantes finalicen evaluaciones.
+                </p>
+
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+
+                <table class="table report-table align-middle mb-0">
+
+                    <thead>
+
+                        <tr>
+                            <th>Estudiante</th>
+                            <th>Examen</th>
+                            <th>Materia</th>
+                            <th>Calificación</th>
+                            <th>Fecha</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var resultado in resultados)
+                        {
+                            var calificacion = resultado.Calificacion ?? 0;
+
+                            <tr>
+
+                                <td>
+                                    <strong>
+                                        @(resultado.Estudiante?.Usuario?.NombreCompleto
+                                            ?? "Estudiante")
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    @(resultado.Examen?.Titulo ?? "—")
+                                </td>
+
+                                <td>
+                                    @(resultado.Examen?.Materia?.Nombre ?? "—")
+                                </td>
+
+                                <td>
+
+                                    <span class="status-badge @(calificacion >= 51
+                                        ? "status-success"
+                                        : "status-danger")">
+
+                                        <span class="status-badge-dot"></span>
+
+                                        @calificacion.ToString("0.##")
+
+                                    </span>
+
+                                </td>
+
+                                <td>
+                                    @(resultado.FechaFin?.ToLocalTime()
+                                        .ToString("dd/MM/yyyy HH:mm") ?? "—")
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+
+    </section>
+
+</div>

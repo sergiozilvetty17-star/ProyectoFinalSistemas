@@ -1,0 +1,176 @@
+﻿@using EcommerceApp.Models
+
+@{
+    ViewData["Title"] = "Resultados";
+
+    var resultados =
+        ViewBag.Resultados as List<IntentoExamen>
+        ?? new List<IntentoExamen>();
+}
+
+<div class="page-shell">
+
+    <section class="page-hero">
+
+        <div>
+
+            <div class="eyebrow">
+                <span class="eyebrow-dot"></span>
+                ÁREA DEL ESTUDIANTE
+            </div>
+
+            <h1>
+                Resultados
+            </h1>
+
+            <p>
+                Consulta los resultados de tus evaluaciones finalizadas.
+            </p>
+
+        </div>
+
+        <div class="hero-actions">
+
+            <a asp-controller="Estudiante"
+               asp-action="Index"
+               class="btn btn-outline-secondary">
+
+                <svg class="button-icon"
+                     viewBox="0 0 24 24"
+                     aria-hidden="true">
+                    <path d="M19 12H5" />
+                    <path d="m12 19-7-7 7-7" />
+                </svg>
+
+                Mis exámenes
+
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <section class="data-panel">
+
+        <div class="data-panel-header">
+
+            <div>
+
+                <span class="section-kicker">
+                    EVALUACIONES
+                </span>
+
+                <h2>
+                    Mis resultados
+                </h2>
+
+                <p>
+                    Historial de evaluaciones que ya has finalizado.
+                </p>
+
+            </div>
+
+            <span class="record-count">
+                @resultados.Count
+                @(resultados.Count == 1 ? "resultado" : "resultados")
+            </span>
+
+        </div>
+
+
+        @if (!resultados.Any())
+        {
+            <div class="empty-state">
+
+                <h3>
+                    No tienes resultados todavía
+                </h3>
+
+                <p>
+                    Cuando finalices un examen, su resultado aparecerá aquí.
+                </p>
+
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+
+                <table class="table report-table align-middle mb-0">
+
+                    <thead>
+
+                        <tr>
+                            <th>Examen</th>
+                            <th>Materia</th>
+                            <th>Calificación</th>
+                            <th>Fecha</th>
+                            <th></th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var resultado in resultados)
+                        {
+                            var calificacion = resultado.Calificacion ?? 0;
+
+                            <tr>
+
+                                <td>
+                                    <strong>
+                                        @(resultado.Examen?.Titulo ?? "—")
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    @(resultado.Examen?.Materia?.Nombre ?? "—")
+                                </td>
+
+                                <td>
+
+                                    <span class="status-badge @(calificacion >= 51
+                                        ? "status-success"
+                                        : "status-danger")">
+
+                                        <span class="status-badge-dot"></span>
+
+                                        @calificacion.ToString("0.##")
+
+                                    </span>
+
+                                </td>
+
+                                <td>
+                                    @(resultado.FechaFin?.ToLocalTime()
+                                        .ToString("dd/MM/yyyy HH:mm") ?? "—")
+                                </td>
+
+                                <td class="text-end">
+
+                                    <a asp-controller="Estudiante"
+                                       asp-action="Resultado"
+                                       asp-route-id="@resultado.Id"
+                                       class="btn btn-sm btn-primary">
+
+                                        Ver resultado
+
+                                    </a>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+
+    </section>
+
+</div>

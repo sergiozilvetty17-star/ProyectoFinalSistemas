@@ -1,0 +1,136 @@
+﻿@using EcommerceApp.Models
+
+@{
+    ViewData["Title"] = "Mis materias";
+
+    var materias =
+        ViewBag.Materias as List<Materia>
+        ?? new List<Materia>();
+}
+
+<div class="page-shell">
+
+    <section class="page-hero">
+
+        <div>
+
+            <div class="eyebrow">
+                <span class="eyebrow-dot"></span>
+                ÁREA DEL ESTUDIANTE
+            </div>
+
+            <h1>
+                Mis materias
+            </h1>
+
+            <p>
+                Consulta las materias en las que estás inscrito.
+            </p>
+
+        </div>
+
+        <div class="hero-actions">
+
+            <a asp-controller="Estudiante"
+               asp-action="Index"
+               class="btn btn-outline-secondary">
+
+                <svg class="button-icon"
+                     viewBox="0 0 24 24"
+                     aria-hidden="true">
+                    <path d="M19 12H5" />
+                    <path d="m12 19-7-7 7-7" />
+                </svg>
+
+                Mis exámenes
+
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <section class="data-panel">
+
+        <div class="data-panel-header">
+
+            <div>
+
+                <span class="section-kicker">
+                    INSCRIPCIONES
+                </span>
+
+                <h2>
+                    Materias inscritas
+                </h2>
+
+                <p>
+                    Materias activas asociadas a tu perfil.
+                </p>
+
+            </div>
+
+            <span class="record-count">
+                @materias.Count
+                @(materias.Count == 1 ? "materia" : "materias")
+            </span>
+
+        </div>
+
+
+        @if (!materias.Any())
+        {
+            <div class="empty-state">
+
+                <h3>
+                    No tienes materias inscritas
+                </h3>
+
+                <p>
+                    Cuando tengas una inscripción activa aparecerá aquí.
+                </p>
+
+            </div>
+        }
+        else
+        {
+            <div class="dashboard-grid">
+
+                @foreach (var materia in materias)
+                {
+                    <article class="examsecure-card dashboard-card">
+
+                        <div class="dashboard-card-top">
+
+                            <span class="dashboard-card-code">
+                                @materia.Codigo
+                            </span>
+
+                            <span class="status-badge status-success">
+                                <span class="status-badge-dot"></span>
+                                Activa
+                            </span>
+
+                        </div>
+
+                        <h3>
+                            @materia.Nombre
+                        </h3>
+
+                        @if (!string.IsNullOrWhiteSpace(materia.Descripcion))
+                        {
+                            <p>
+                                @materia.Descripcion
+                            </p>
+                        }
+
+                    </article>
+                }
+
+            </div>
+        }
+
+    </section>
+
+</div>
