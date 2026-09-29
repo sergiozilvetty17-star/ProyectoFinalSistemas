@@ -1,4 +1,5 @@
 ﻿using EcommerceApp.Data;
+using Npgsql;
 using EcommerceApp.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -272,7 +273,47 @@ namespace EcommerceApp.Controllers
 
             _context.IntentosExamen.Add(intento);
 
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+                when (ex.InnerException is PostgresException postgresException &&
+                      postgresException.SqlState == PostgresErrorCodes.UniqueViolation)
+            {
+                _context.Entry(intento).State = EntityState.Detached;
+
+                var intentoConcurrente = await _context.IntentosExamen
+                    .FirstOrDefaultAsync(i =>
+                        i.ExamenId == examen.Id &&
+                        i.EstudianteId == estudiante.Id &&
+                        !i.Anulado);
+
+                if (intentoConcurrente == null)
+                {
+                    throw;
+                }
+
+                if (intentoConcurrente.Finalizado)
+                {
+                    TempData["Error"] =
+                        "Ya has finalizado este examen.";
+
+                    return RedirectToAction(nameof(Index));
+                }
+
+                if (examen.RequiereVerificacionFacial &&
+                    !intentoConcurrente.IdentidadVerificada)
+                {
+                    return RedirectToAction(
+                        nameof(VerificarIdentidad),
+                        new { id = intentoConcurrente.Id });
+                }
+
+                return RedirectToAction(
+                    nameof(ResolverExamen),
+                    new { id = intentoConcurrente.Id });
+            }
 
             _context.EventosSeguridad.Add(new EventoSeguridad
             {
@@ -742,7 +783,7 @@ namespace EcommerceApp.Controllers
                 descriptorActual = descriptor
                     .Split(',', StringSplitOptions.RemoveEmptyEntries)
                     .Select(valor => float.Parse(
-                        valor,
+                        valor.Trim(),
                         System.Globalization.CultureInfo.InvariantCulture))
                     .ToArray();
             }
@@ -761,6 +802,16 @@ namespace EcommerceApp.Controllers
                 {
                     success = false,
                     message = $"El descriptor debe contener 128 valores. Se recibieron {descriptorActual.Length}."
+                });
+            }
+
+            if (descriptorActual.Any(valor =>
+                float.IsNaN(valor) || float.IsInfinity(valor)))
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "El descriptor facial contiene valores no válidos."
                 });
             }
 
@@ -789,6 +840,16 @@ namespace EcommerceApp.Controllers
                 descriptorRegistrado,
                 0,
                 registroFacial.FaceEmbedding.Length);
+
+            if (descriptorRegistrado.Any(valor =>
+                float.IsNaN(valor) || float.IsInfinity(valor)))
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "El registro facial almacenado contiene valores no válidos."
+                });
+            }
 
             double distancia = 0;
 
@@ -881,6 +942,12 @@ namespace EcommerceApp.Controllers
         }
     }
 }
+
+
+
+
+
+
 
 
 

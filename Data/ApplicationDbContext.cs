@@ -199,9 +199,19 @@ namespace EcommerceApp.Data
                 .HasPrecision(10, 2);
 
             builder.Entity<IntentoExamen>()
+                .HasIndex(i => new
+                {
+                    i.ExamenId,
+                    i.EstudianteId
+                })
+                .IsUnique()
+                .HasFilter("\"Anulado\" = false");
+
+            builder.Entity<IntentoExamen>()
                 .Property(i => i.Calificacion)
                 .HasPrecision(10, 2);
         }
     }
 }
+
 
